@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { addDays, format, startOfMonth, addYears, parseISO } from 'date-fns';
 import type { Household, Interaction, CadenceDays, ARStatus, InteractionType, TouchStatus } from '@/types';
 import { replayInteractions } from '@/lib/household-logic';
