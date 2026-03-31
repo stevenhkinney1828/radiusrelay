@@ -59,7 +59,7 @@ export default function AddClientModal({ onClose, onDeleted, editId }: AddClient
         plan_note: planNote,
         is_active: isActive,
         next_quarterly_touch: nextTouch || existing.next_quarterly_touch,
-        next_review_target: nextReview || existing.next_review_target,
+        next_review_target: nextReview || existing.next_review_target || null,
       });
     } else {
       if (!planDate) return;
