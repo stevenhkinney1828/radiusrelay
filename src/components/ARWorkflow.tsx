@@ -214,16 +214,19 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
               <input type="date" value={scheduledDate} onChange={e => setScheduledDate(e.target.value)}
                 className="w-full px-3 py-2 border rounded-md text-sm bg-background" />
             </Field>
+            <Field label="Note">
+              <input type="text" value={scheduledNote} onChange={e => setScheduledNote(e.target.value)}
+                placeholder="Optional" className="w-full px-3 py-2 border rounded-md text-sm bg-background" />
+            </Field>
             <div className="space-y-2 pt-2">
-              <button onClick={() => { logScheduled(); }}
+              <button onClick={logScheduled}
                 disabled={!scheduledDate}
                 className="w-full py-2 text-sm rounded-md bg-primary text-primary-foreground disabled:opacity-40">
-                Confirm Scheduled
+                Save Scheduled Date
               </button>
-              <button onClick={() => { if (scheduledDate) { logScheduled(); setStep(2); } }}
-                disabled={!scheduledDate}
-                className="w-full py-2 text-sm rounded-md border bg-card disabled:opacity-40">
-                Skip to Completed →
+              <button onClick={() => setStep(2)}
+                className="w-full py-2 text-sm rounded-md border bg-card">
+                Go to Completed →
               </button>
             </div>
           </>
