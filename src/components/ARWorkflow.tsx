@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useData } from '@/context/DataContext';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import type { ARStatus } from '@/types';
@@ -57,7 +57,16 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
   const [planUpdated, setPlanUpdated] = useState(false);
   const [completedNote, setCompletedNote] = useState('');
 
+  const isSaving = useRef(false);
+
   if (!household) return null;
+
+  const guardedAddInteraction = (data: Parameters<typeof addInteraction>[0]) => {
+    if (isSaving.current) return;
+    isSaving.current = true;
+    addInteraction(data);
+    setTimeout(() => { isSaving.current = false; }, 500);
+  };
 
   const showSuccess = (msg: string) => {
     setSavedMsg(msg);
@@ -66,7 +75,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
 
   const logOutreach = () => {
     if (!outreachDate) return;
-    addInteraction({
+    guardedAddInteraction({
       household_id: householdId,
       date: outreachDate,
       type: 'Annual review meeting',
@@ -83,7 +92,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
 
   const logScheduled = () => {
     if (!scheduledDate) return;
-    addInteraction({
+    guardedAddInteraction({
       household_id: householdId,
       date: scheduledDate,
       type: 'Annual review meeting',
@@ -100,7 +109,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
 
   const logCompleted = () => {
     if (!completedDate) return;
-    addInteraction({
+    guardedAddInteraction({
       household_id: householdId,
       date: completedDate,
       type: 'Annual review meeting',
@@ -117,7 +126,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
 
   const logPostpone = () => {
     if (!followUpDate) return;
-    addInteraction({
+    guardedAddInteraction({
       household_id: householdId,
       date: new Date().toISOString().slice(0, 10),
       type: 'Annual review meeting',

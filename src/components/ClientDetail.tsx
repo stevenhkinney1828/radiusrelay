@@ -30,7 +30,10 @@ type DisplayItem =
   | { kind: 'flat'; interaction: Interaction }
   | { kind: 'ar-group'; completed: boolean; entries: Interaction[] };
 
-/** Group AR interactions into cycles; leave others flat. Do not change this logic. */
+/** Group AR interactions into cycles; leave others flat.
+ * Interactions arrive newest-first. A marks_ar entry is the END of a cycle.
+ * When we hit marks_ar and the current group already has newer (post-cycle) entries,
+ * flush those as a separate open-cycle group before starting the completed cycle. */
 function buildDisplayList(sortedInteractions: Interaction[]): DisplayItem[] {
   const items: DisplayItem[] = [];
   let currentGroup: Interaction[] | null = null;
@@ -50,10 +53,18 @@ function buildDisplayList(sortedInteractions: Interaction[]): DisplayItem[] {
         currentGroup = [];
         currentCompleted = false;
       }
-      currentGroup.push(i);
       if (i.marks_ar) {
+        // If the current group already has entries, those are from a NEWER cycle
+        // (post this completion). Flush them as an open group first.
+        if (currentGroup.length > 0) {
+          flushGroup();
+        }
+        // Start a new group for just this completed cycle
+        currentGroup = [i];
         currentCompleted = true;
         flushGroup();
+      } else {
+        currentGroup.push(i);
       }
     } else {
       flushGroup();
