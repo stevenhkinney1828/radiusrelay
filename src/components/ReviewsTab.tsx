@@ -12,8 +12,8 @@ interface ReviewsTabProps {
 export default function ReviewsTab({ onSelectClient, onMoveAR }: ReviewsTabProps) {
   const { households } = useData();
   const now = new Date();
-  const today = now.toISOString().slice(0, 10);
-  const in28Days = addDays(now, 28).toISOString().slice(0, 10);
+  const thisMonth = startOfMonth(now);
+  const nextMonth = startOfMonth(addMonths(now, 1));
   const thisMonth = startOfMonth(now);
   const nextMonth = startOfMonth(addMonths(now, 1));
 
