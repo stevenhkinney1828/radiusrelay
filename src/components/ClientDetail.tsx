@@ -206,8 +206,9 @@ export default function ClientDetail({ householdId, onBack, onEdit, onARWorkflow
 
 // --- AR Group Card (compact milestone summary) ---
 function ARGroupCard({ completed, entries }: { completed: boolean; entries: Interaction[] }) {
-  // Show chronological (oldest first)
-  const chronological = [...entries].reverse();
+  // For completed cycles, show only the completion entry; for open cycles show all steps
+  const toShow = completed ? entries.filter(e => e.marks_ar) : entries;
+  const chronological = [...toShow].reverse();
 
   return (
     <div className="mx-4 my-2 rounded-lg border bg-card overflow-hidden">
