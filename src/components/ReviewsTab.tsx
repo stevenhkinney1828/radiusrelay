@@ -62,6 +62,21 @@ export default function ReviewsTab({ onSelectClient, onMoveAR }: ReviewsTabProps
   );
 }
 
+function getARDateStr(h: Household): string {
+  const isCompleted = isCycleComplete(h);
+  if (isCompleted && h.last_completed_review) {
+    return ' · ' + formatDate(h.last_completed_review, 'MMM d, yyyy');
+  }
+  if (h.annual_review_status === 'Scheduled' && h.annual_review_scheduled) {
+    return ' · ' + formatDate(h.annual_review_scheduled, 'MMM d, yyyy');
+  }
+  if (h.next_review_target) {
+    return ' · ' + new Date(h.next_review_target + 'T00:00:00')
+      .toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  }
+  return '';
+}
+
 function Section({ title, clients, onSelect, onMove }: {
   title: string;
   clients: Household[];
@@ -75,26 +90,14 @@ function Section({ title, clients, onSelect, onMove }: {
       <div className="section-header">{title}</div>
       {clients.map(h => {
         const displayStatus = getDisplayARStatus(h);
+        const pillLabel = (displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus) + getARDateStr(h);
         return (
           <div key={h.id} className="client-row" onClick={() => onSelect(h.id)}>
-            <div className="flex flex-col gap-0.5">
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-sm">{h.identifier}</span>
-                <span className={getARStatusBadgeClass(displayStatus)}>
-                  {displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus}
-                </span>
-              </div>
-              {displayStatus === 'Ready to Schedule' && h.next_review_target && (
-                <span className="text-[10px] text-muted-foreground ml-0.5">
-                  Target: {new Date(h.next_review_target + 'T00:00:00')
-                    .toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                </span>
-              )}
-              {isCycleComplete(h) && h.last_completed_review && (
-                <span style={{ fontSize: 10, color: '#6EE7B7', fontWeight: 600 }}>
-                  {formatDate(h.last_completed_review, 'MMM d, yyyy')}
-                </span>
-              )}
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-sm">{h.identifier}</span>
+              <span className={getARStatusBadgeClass(displayStatus)}>
+                {pillLabel}
+              </span>
             </div>
             {onMove && (
               <button
@@ -128,7 +131,7 @@ function NudgeSection({ title, clients, onSelect }: {
             <div className="flex items-center gap-2">
               <span className="font-medium text-sm">{h.identifier}</span>
               <span className={getARStatusBadgeClass(displayStatus)}>
-                {displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus}
+                {(displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus) + getARDateStr(h)}
               </span>
             </div>
             {h.next_follow_up && (

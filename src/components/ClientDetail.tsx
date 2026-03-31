@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useData } from '@/context/DataContext';
-import { getDisplayARStatus, getARStatusBadgeClass, formatDate, formatMonthYear, isCycleComplete } from '@/lib/household-logic';
+import { getDisplayARStatus, getARStatusBadgeClass, formatDate, isCycleComplete } from '@/lib/household-logic';
 import { ChevronLeft, Edit2, Star } from 'lucide-react';
 import { parseISO, subMonths } from 'date-fns';
 import type { Interaction } from '@/types';
@@ -143,16 +143,15 @@ export default function ClientDetail({ householdId, onBack, onEdit, onARWorkflow
           <div className="text-xs text-muted-foreground mb-1">Annual Review</div>
           <span className={getARStatusBadgeClass(displayStatus)}>
             {displayStatus}
+            {isCycleComplete(household) && household.last_completed_review
+              ? ' · ' + formatDate(household.last_completed_review, 'MMM d, yyyy')
+              : household.annual_review_status === 'Scheduled' && household.annual_review_scheduled
+              ? ' · ' + formatDate(household.annual_review_scheduled, 'MMM d, yyyy')
+              : household.next_review_target
+              ? ' · ' + new Date(household.next_review_target + 'T00:00:00')
+                  .toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+              : ''}
           </span>
-          {isCycleComplete(household) && household.last_completed_review ? (
-            <div style={{ fontSize: 11, color: '#065F46', marginTop: 6, fontWeight: 600 }}>
-              {formatDate(household.last_completed_review, 'MMM d, yyyy')}
-            </div>
-          ) : (
-            <div className="text-xs text-muted-foreground mt-2">
-              Target: {formatMonthYear(household.next_review_target)}
-            </div>
-          )}
         </button>
 
         <button onClick={onTouchWorkflow} className="p-4 rounded-lg border bg-card text-left">
