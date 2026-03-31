@@ -109,7 +109,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
 
   const logCompleted = () => {
     if (!completedDate) return;
-    addInteraction({
+    guardedAddInteraction({
       household_id: householdId,
       date: completedDate,
       type: 'Annual review meeting',
