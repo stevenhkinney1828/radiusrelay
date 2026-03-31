@@ -11,7 +11,7 @@ interface AddClientModalProps {
 
 const cadenceOptions: CadenceDays[] = [30, 45, 60, 90, 120];
 
-export default function AddClientModal({ onClose, editId }: AddClientModalProps) {
+export default function AddClientModal({ onClose, onDeleted, editId }: AddClientModalProps) {
   const { households, addHousehold, updateHousehold, deleteHousehold } = useData();
   const existing = editId ? households.find(h => h.id === editId) : null;
 
