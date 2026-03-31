@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useData } from '@/context/DataContext';
 import { shouldSuppressTouch, formatDate } from '@/lib/household-logic';
-import { parseISO, addDays, isBefore, isAfter } from 'date-fns';
+import { addDays } from 'date-fns';
 import type { Household } from '@/types';
 
 interface TouchesTabProps {
