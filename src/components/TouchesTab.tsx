@@ -34,23 +34,12 @@ export default function TouchesTab({ onSelectClient }: TouchesTabProps) {
     [active, today, in28Days]
   );
 
-  const nudges = useMemo(() =>
-    households.filter(h =>
-      h.is_active &&
-      h.next_follow_up &&
-      h.next_follow_up >= today &&
-      h.next_follow_up <= in28Days
-    ).sort((a, b) => a.next_follow_up!.localeCompare(b.next_follow_up!)),
-    [households, today, in28Days]
-  );
-
   return (
     <div>
       <TouchSection title={`Overdue (${overdue.length})`} clients={overdue} dateField="next_quarterly_touch" onSelect={onSelectClient} isOverdue />
       <TouchSection title={`Next 4 weeks (${upcoming.length})`} clients={upcoming} dateField="next_quarterly_touch" onSelect={onSelectClient} />
-      <TouchSection title={`Follow-up nudges (${nudges.length})`} clients={nudges} dateField="next_follow_up" onSelect={onSelectClient} />
 
-      {overdue.length === 0 && upcoming.length === 0 && nudges.length === 0 && (
+      {overdue.length === 0 && upcoming.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
           <p className="text-sm">No touches due</p>
         </div>

@@ -96,3 +96,33 @@ function Section({ title, clients, onSelect, onMove }: {
     </div>
   );
 }
+
+function NudgeSection({ title, clients, onSelect }: {
+  title: string;
+  clients: Household[];
+  onSelect: (id: string) => void;
+}) {
+  if (clients.length === 0) return null;
+
+  return (
+    <div>
+      <div className="section-header" style={{ color: '#F59E0B' }}>{title}</div>
+      {clients.map(h => {
+        const displayStatus = getDisplayARStatus(h);
+        return (
+          <div key={h.id} className="client-row" onClick={() => onSelect(h.id)}>
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-sm">{h.identifier}</span>
+              <span className={getARStatusBadgeClass(displayStatus)}>
+                {displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus}
+              </span>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {formatMonthYear(h.next_follow_up!).replace(/\s\d{4}$/, '')}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
