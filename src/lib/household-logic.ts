@@ -75,13 +75,12 @@ export function replayInteractions(
 
   for (const interaction of sorted) {
     if (interaction.type === 'Quarterly check-in') {
-      if (interaction.touch_status === 'Completed') {
+      if (interaction.touch_status === 'Completed' || interaction.touch_status === 'Attempted - email' || interaction.touch_status === 'Attempted - phone') {
         h.last_counted_touch = interaction.date;
         h.next_quarterly_touch = format(addDays(parseISO(interaction.date), h.cadence_days), 'yyyy-MM-dd');
       } else if (interaction.touch_status === 'Skipped') {
         h.next_quarterly_touch = format(addDays(parseISO(interaction.date), 45), 'yyyy-MM-dd');
       }
-      // Attempted: no clock change
 
       if (interaction.follow_up) {
         h.next_follow_up = interaction.follow_up;

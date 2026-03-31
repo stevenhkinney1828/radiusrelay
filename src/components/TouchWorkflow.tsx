@@ -27,7 +27,7 @@ export default function TouchWorkflow({ householdId, onBack }: TouchWorkflowProp
       date,
       type: 'Quarterly check-in',
       touch_status: outcome,
-      counts_cadence: outcome === 'Completed',
+      counts_cadence: outcome === 'Completed' || outcome === 'Attempted - email' || outcome === 'Attempted - phone',
       marks_ar: false,
       ar_status: null,
       plan_updated: false,
