@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useData } from '@/context/DataContext';
-import { getDisplayARStatus, getARStatusBadgeClass, formatMonthYear, formatDate, isCycleComplete } from '@/lib/household-logic';
-import { parseISO, isBefore, startOfMonth, addMonths, addDays, isSameMonth } from 'date-fns';
+import { getDisplayARStatus, getARStatusBadgeClass, formatDate, isCycleComplete } from '@/lib/household-logic';
+import { parseISO, isBefore, startOfMonth, addMonths, isSameMonth } from 'date-fns';
 import type { Household } from '@/types';
 
 interface ReviewsTabProps {
@@ -12,24 +12,28 @@ interface ReviewsTabProps {
 export default function ReviewsTab({ onSelectClient, onMoveAR }: ReviewsTabProps) {
   const { households } = useData();
   const now = new Date();
-  const today = now.toISOString().slice(0, 10);
-  const in28Days = addDays(now, 28).toISOString().slice(0, 10);
   const thisMonth = startOfMonth(now);
   const nextMonth = startOfMonth(addMonths(now, 1));
 
   const active = useMemo(() => households.filter(h => h.is_active && h.next_review_target), [households]);
 
+  const inProgress = (h: Household) =>
+    ['Working to Schedule', 'Postponed'].includes(h.annual_review_status);
+
   const overdue = useMemo(() => active.filter(h => {
+    if (inProgress(h)) return false;
     const target = parseISO(h.next_review_target!);
     return isBefore(target, thisMonth) && !isCycleComplete(h);
   }).sort((a, b) => a.next_review_target!.localeCompare(b.next_review_target!)), [active, thisMonth]);
 
   const thisMonthClients = useMemo(() => active.filter(h => {
+    if (inProgress(h)) return false;
     const target = parseISO(h.next_review_target!);
     return isSameMonth(target, thisMonth);
   }).sort((a, b) => a.identifier.localeCompare(b.identifier)), [active, thisMonth]);
 
   const nextMonthClients = useMemo(() => active.filter(h => {
+    if (inProgress(h)) return false;
     const target = parseISO(h.next_review_target!);
     return isSameMonth(target, nextMonth);
   }).sort((a, b) => a.identifier.localeCompare(b.identifier)), [active, nextMonth]);
@@ -37,12 +41,9 @@ export default function ReviewsTab({ onSelectClient, onMoveAR }: ReviewsTabProps
   const followUpNudges = useMemo(() =>
     households.filter(h =>
       h.is_active &&
-      h.next_follow_up &&
-      ['Working to Schedule', 'Postponed'].includes(h.annual_review_status) &&
-      h.next_follow_up >= today &&
-      h.next_follow_up <= in28Days
-    ).sort((a, b) => a.next_follow_up!.localeCompare(b.next_follow_up!)),
-    [households, today, in28Days]
+      inProgress(h)
+    ).sort((a, b) => (a.next_follow_up || '9999').localeCompare(b.next_follow_up || '9999')),
+    [households]
   );
 
   return (
@@ -117,9 +118,11 @@ function NudgeSection({ title, clients, onSelect }: {
                 {displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus}
               </span>
             </div>
-            <span className="text-xs text-muted-foreground">
-              {formatDate(h.next_follow_up!, 'MMM d')}
-            </span>
+            {h.next_follow_up && (
+              <span className="text-xs text-muted-foreground">
+                {formatDate(h.next_follow_up, 'MMM d')}
+              </span>
+            )}
           </div>
         );
       })}
