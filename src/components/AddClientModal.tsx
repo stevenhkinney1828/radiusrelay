@@ -23,10 +23,17 @@ export default function AddClientModal({ onClose, onDeleted, editId }: AddClient
   const [isActive, setIsActive] = useState(existing?.is_active ?? true);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  // Calculated preview dates
-  const previewNextTouch = planDate
-    ? format(addDays(parseISO(planDate), cadenceDays), 'yyyy-MM-dd')
-    : '';
+  // Calculated preview dates (only for new client flow)
+  const previewNextTouch = (() => {
+    if (!planDate) return '';
+    try {
+      const d = parseISO(planDate);
+      if (isNaN(d.getTime())) return '';
+      return format(addDays(d, cadenceDays), 'yyyy-MM-dd');
+    } catch {
+      return '';
+    }
+  })();
   const previewNextReview = (() => {
     if (!planDate) return '';
     try {
