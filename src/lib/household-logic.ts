@@ -1,4 +1,4 @@
-import { addDays, addMonths, addYears, differenceInMonths, format, isBefore, isAfter, isSameMonth, startOfMonth, parseISO } from 'date-fns';
+import { addDays, addYears, format, parseISO, startOfMonth } from 'date-fns';
 import type { Household, Interaction, ARStatus } from '@/types';
 
 /**
