@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useData } from '@/context/DataContext';
-import { getDisplayARStatus, getARStatusBadgeClass, formatMonthYear, isCycleComplete } from '@/lib/household-logic';
+import { getDisplayARStatus, getARStatusBadgeClass, formatMonthYear, formatDate, isCycleComplete } from '@/lib/household-logic';
 import { parseISO, isBefore, startOfMonth, addMonths, addDays, isSameMonth } from 'date-fns';
 import type { Household } from '@/types';
 
