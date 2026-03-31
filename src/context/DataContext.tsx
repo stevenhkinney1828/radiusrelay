@@ -39,8 +39,23 @@ const DataContext = createContext<DataContextType | null>(null);
 
 export function useData(): DataContextType {
   const ctx = useContext(DataContext);
-  if (!ctx) throw new Error('useData must be used within DataProvider');
+  if (!ctx) {
+    // During Vite HMR, the context can become stale — reload instead of crashing
+    if (import.meta.hot) {
+      window.location.reload();
+      // Return a stub to avoid the throw while reload is pending
+      return {} as DataContextType;
+    }
+    throw new Error('useData must be used within DataProvider');
+  }
   return ctx;
+}
+
+// Force full reload when this module is updated to prevent stale context
+if (import.meta.hot) {
+  import.meta.hot.accept(() => {
+    window.location.reload();
+  });
 }
 
 export function DataProvider({ children }: { children: ReactNode }) {
