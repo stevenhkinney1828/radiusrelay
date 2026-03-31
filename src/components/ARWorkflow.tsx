@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useData } from '@/context/DataContext';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import type { ARStatus } from '@/types';
