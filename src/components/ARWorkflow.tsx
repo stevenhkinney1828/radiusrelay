@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useData } from '@/context/DataContext';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import type { ARStatus } from '@/types';
 
 interface ARWorkflowProps {
@@ -10,14 +10,35 @@ interface ARWorkflowProps {
 
 const steps = ['Outreach', 'Scheduled', 'Completed'] as const;
 
-export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
-  const { households, addInteraction } = useData();
-  const household = households.find(h => h.id === householdId);
-  const [step, setStep] = useState(0);
+function statusToStep(status: ARStatus): number {
+  switch (status) {
+    case 'Working to Schedule': return 0;
+    case 'Scheduled': return 1;
+    case 'Completed':
+    case 'Ready to Schedule':
+    default: return 0;
+  }
+}
 
-  // Step 1 - Outreach
-  const [outreachDate, setOutreachDate] = useState('');
-  const [followUpDate, setFollowUpDate] = useState('');
+export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
+  const { households, interactions, addInteraction } = useData();
+  const household = households.find(h => h.id === householdId);
+
+  // Find existing outreach interaction for this cycle to pre-fill
+  const existingOutreach = useMemo(() => {
+    if (!household) return null;
+    return interactions
+      .filter(i => i.household_id === householdId && i.type === 'Annual review meeting' && i.ar_status === 'Working to Schedule')
+      .sort((a, b) => b.date.localeCompare(a.date))[0] || null;
+  }, [interactions, householdId, household]);
+
+  const initialStep = household ? statusToStep(household.annual_review_status) : 0;
+  const [step, setStep] = useState(initialStep);
+  const [savedMsg, setSavedMsg] = useState('');
+
+  // Step 1 - Outreach (pre-fill from existing outreach)
+  const [outreachDate, setOutreachDate] = useState(existingOutreach?.date || '');
+  const [followUpDate, setFollowUpDate] = useState(existingOutreach?.follow_up || '');
   const [outreachNote, setOutreachNote] = useState('');
 
   // Step 2 - Scheduled
@@ -29,6 +50,11 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
   const [completedNote, setCompletedNote] = useState('');
 
   if (!household) return null;
+
+  const showSuccess = (msg: string) => {
+    setSavedMsg(msg);
+    setTimeout(() => setSavedMsg(''), 3000);
+  };
 
   const logOutreach = () => {
     if (!outreachDate) return;
@@ -44,7 +70,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
       follow_up: followUpDate || null,
       note: outreachNote,
     });
-    onBack();
+    showSuccess('Outreach logged ✓');
   };
 
   const logScheduled = () => {
@@ -61,7 +87,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
       follow_up: scheduledDate,
       note: '',
     });
-    onBack();
+    showSuccess('Meeting scheduled ✓');
   };
 
   const logCompleted = () => {
@@ -109,6 +135,13 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
         <div className="w-12" />
       </div>
 
+      {/* Success banner */}
+      {savedMsg && (
+        <div className="mx-4 mt-3 px-3 py-2 rounded-md bg-primary/10 text-primary text-sm flex items-center gap-2">
+          <Check size={14} /> {savedMsg}
+        </div>
+      )}
+
       {/* Step indicator */}
       <div className="flex items-center justify-center gap-1 px-4 py-3 border-b">
         {steps.map((s, i) => (
@@ -144,9 +177,9 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
             <div className="space-y-2 pt-2">
               <button onClick={logOutreach} disabled={!outreachDate}
                 className="w-full py-2 text-sm rounded-md bg-primary text-primary-foreground disabled:opacity-40">
-                Log Outreach Sent
+                {existingOutreach ? 'Log Another Follow-up' : 'Log Outreach Sent'}
               </button>
-              <button onClick={() => { if (outreachDate) { setStep(1); } }}
+              <button onClick={() => { if (outreachDate) { logOutreach(); setStep(1); } }}
                 disabled={!outreachDate}
                 className="w-full py-2 text-sm rounded-md border bg-card disabled:opacity-40">
                 They Responded →
@@ -166,11 +199,12 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
                 className="w-full px-3 py-2 border rounded-md text-sm bg-background" />
             </Field>
             <div className="space-y-2 pt-2">
-              <button onClick={logScheduled} disabled={!scheduledDate}
+              <button onClick={() => { logScheduled(); }}
+                disabled={!scheduledDate}
                 className="w-full py-2 text-sm rounded-md bg-primary text-primary-foreground disabled:opacity-40">
                 Confirm Scheduled
               </button>
-              <button onClick={() => { if (scheduledDate) { setStep(2); } }}
+              <button onClick={() => { if (scheduledDate) { logScheduled(); setStep(2); } }}
                 disabled={!scheduledDate}
                 className="w-full py-2 text-sm rounded-md border bg-card disabled:opacity-40">
                 Skip to Completed →
