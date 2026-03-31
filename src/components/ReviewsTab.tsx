@@ -14,8 +14,6 @@ export default function ReviewsTab({ onSelectClient, onMoveAR }: ReviewsTabProps
   const now = new Date();
   const thisMonth = startOfMonth(now);
   const nextMonth = startOfMonth(addMonths(now, 1));
-  const thisMonth = startOfMonth(now);
-  const nextMonth = startOfMonth(addMonths(now, 1));
 
   const active = useMemo(() => households.filter(h => h.is_active && h.next_review_target), [households]);
 
