@@ -53,7 +53,9 @@ export function useData(): DataContextType {
 
 // Force full reload when this module is updated to prevent stale context
 if (import.meta.hot) {
-  import.meta.hot.decline();
+  import.meta.hot.accept(() => {
+    window.location.reload();
+  });
 }
 
 export function DataProvider({ children }: { children: ReactNode }) {
