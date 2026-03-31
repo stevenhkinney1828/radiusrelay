@@ -35,7 +35,7 @@ export function shouldSuppressTouch(household: Household): boolean {
   if (household.next_review_target && household.next_quarterly_touch && !isCycleComplete(household)) {
     const reviewTarget = parseISO(household.next_review_target);
     const nextTouch = parseISO(household.next_quarterly_touch);
-    if (isBefore(reviewTarget, nextTouch)) return true;
+    if (reviewTarget < nextTouch) return true;
   }
 
   return false;
