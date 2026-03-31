@@ -23,10 +23,17 @@ export default function AddClientModal({ onClose, onDeleted, editId }: AddClient
   const [isActive, setIsActive] = useState(existing?.is_active ?? true);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  // Calculated preview dates
-  const previewNextTouch = planDate
-    ? format(addDays(parseISO(planDate), cadenceDays), 'yyyy-MM-dd')
-    : '';
+  // Calculated preview dates (only for new client flow)
+  const previewNextTouch = (() => {
+    if (!planDate) return '';
+    try {
+      const d = parseISO(planDate);
+      if (isNaN(d.getTime())) return '';
+      return format(addDays(d, cadenceDays), 'yyyy-MM-dd');
+    } catch {
+      return '';
+    }
+  })();
   const previewNextReview = (() => {
     if (!planDate) return '';
     try {
@@ -52,7 +59,7 @@ export default function AddClientModal({ onClose, onDeleted, editId }: AddClient
         plan_note: planNote,
         is_active: isActive,
         next_quarterly_touch: nextTouch || existing.next_quarterly_touch,
-        next_review_target: nextReview || existing.next_review_target,
+        next_review_target: nextReview || existing.next_review_target || null,
       });
     } else {
       if (!planDate) return;
@@ -160,6 +167,30 @@ export default function AddClientModal({ onClose, onDeleted, editId }: AddClient
               className="w-full px-3 py-2 border rounded-md text-sm bg-background"
             />
           </Field>
+
+          {editId && (
+            <>
+              <p className="text-xs font-semibold text-muted-foreground mt-2">Key dates</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Next quarterly touch">
+                  <input
+                    type="date"
+                    value={nextTouch}
+                    onChange={e => setNextTouch(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-md text-sm bg-background"
+                  />
+                </Field>
+                <Field label="Next annual review target">
+                  <input
+                    type="date"
+                    value={nextReview}
+                    onChange={e => setNextReview(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-md text-sm bg-background"
+                  />
+                </Field>
+              </div>
+            </>
+          )}
 
           {editId && (
             <label className="flex items-center gap-2 text-sm">
