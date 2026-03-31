@@ -196,9 +196,8 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
                 className="w-full py-2 text-sm rounded-md bg-primary text-primary-foreground disabled:opacity-40">
                 {existingOutreach ? 'Log Another Follow-up' : 'Log Outreach Sent'}
               </button>
-              <button onClick={() => { if (outreachDate) { logOutreach(); setStep(1); } }}
-                disabled={!outreachDate}
-                className="w-full py-2 text-sm rounded-md border bg-card disabled:opacity-40">
+              <button onClick={() => setStep(1)}
+                className="w-full py-2 text-sm rounded-md border bg-card">
                 They Responded →
               </button>
               <button onClick={logPostpone} disabled={!followUpDate}
