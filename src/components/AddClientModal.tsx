@@ -65,7 +65,7 @@ export default function AddClientModal({ onClose, onDeleted, editId }: AddClient
   const handleDelete = () => {
     if (confirmDelete && editId) {
       deleteHousehold(editId);
-      onClose();
+      onDeleted ? onDeleted() : onClose();
     } else {
       setConfirmDelete(true);
     }
