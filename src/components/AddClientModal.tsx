@@ -5,12 +5,13 @@ import type { CadenceDays } from '@/types';
 
 interface AddClientModalProps {
   onClose: () => void;
+  onDeleted?: () => void;
   editId?: string;
 }
 
 const cadenceOptions: CadenceDays[] = [30, 45, 60, 90, 120];
 
-export default function AddClientModal({ onClose, editId }: AddClientModalProps) {
+export default function AddClientModal({ onClose, onDeleted, editId }: AddClientModalProps) {
   const { households, addHousehold, updateHousehold, deleteHousehold } = useData();
   const existing = editId ? households.find(h => h.id === editId) : null;
 
@@ -64,7 +65,7 @@ export default function AddClientModal({ onClose, editId }: AddClientModalProps)
   const handleDelete = () => {
     if (confirmDelete && editId) {
       deleteHousehold(editId);
-      onClose();
+      onDeleted ? onDeleted() : onClose();
     } else {
       setConfirmDelete(true);
     }

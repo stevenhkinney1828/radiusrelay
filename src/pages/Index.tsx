@@ -117,7 +117,14 @@ function AppContent() {
       )}
 
       {editClientId && (
-        <AddClientModal editId={editClientId} onClose={() => setEditClientId(null)} />
+        <AddClientModal
+          editId={editClientId}
+          onClose={() => setEditClientId(null)}
+          onDeleted={() => {
+            setEditClientId(null);
+            setScreen({ type: 'tabs' });
+          }}
+        />
       )}
 
       {showQuickLog && (
