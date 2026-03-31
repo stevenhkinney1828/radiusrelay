@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useData } from '@/context/DataContext';
-import { getDisplayARStatus, getARStatusBadgeClass, formatDate } from '@/lib/household-logic';
+import { getDisplayARStatus, getARStatusBadgeClass, formatDate, isCycleComplete } from '@/lib/household-logic';
 import type { Household, SortOption, FilterOption } from '@/types';
 import { isBefore, parseISO } from 'date-fns';
 
