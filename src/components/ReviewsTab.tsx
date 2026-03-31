@@ -19,17 +19,23 @@ export default function ReviewsTab({ onSelectClient, onMoveAR }: ReviewsTabProps
 
   const active = useMemo(() => households.filter(h => h.is_active && h.next_review_target), [households]);
 
+  const inProgress = (h: Household) =>
+    ['Working to Schedule', 'Postponed'].includes(h.annual_review_status);
+
   const overdue = useMemo(() => active.filter(h => {
+    if (inProgress(h)) return false;
     const target = parseISO(h.next_review_target!);
     return isBefore(target, thisMonth) && !isCycleComplete(h);
   }).sort((a, b) => a.next_review_target!.localeCompare(b.next_review_target!)), [active, thisMonth]);
 
   const thisMonthClients = useMemo(() => active.filter(h => {
+    if (inProgress(h)) return false;
     const target = parseISO(h.next_review_target!);
     return isSameMonth(target, thisMonth);
   }).sort((a, b) => a.identifier.localeCompare(b.identifier)), [active, thisMonth]);
 
   const nextMonthClients = useMemo(() => active.filter(h => {
+    if (inProgress(h)) return false;
     const target = parseISO(h.next_review_target!);
     return isSameMonth(target, nextMonth);
   }).sort((a, b) => a.identifier.localeCompare(b.identifier)), [active, nextMonth]);
@@ -37,12 +43,9 @@ export default function ReviewsTab({ onSelectClient, onMoveAR }: ReviewsTabProps
   const followUpNudges = useMemo(() =>
     households.filter(h =>
       h.is_active &&
-      h.next_follow_up &&
-      ['Working to Schedule', 'Postponed'].includes(h.annual_review_status) &&
-      h.next_follow_up >= today &&
-      h.next_follow_up <= in28Days
-    ).sort((a, b) => a.next_follow_up!.localeCompare(b.next_follow_up!)),
-    [households, today, in28Days]
+      inProgress(h)
+    ).sort((a, b) => (a.next_follow_up || '9999').localeCompare(b.next_follow_up || '9999')),
+    [households]
   );
 
   return (
