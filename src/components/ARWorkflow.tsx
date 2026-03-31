@@ -57,7 +57,16 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
   const [planUpdated, setPlanUpdated] = useState(false);
   const [completedNote, setCompletedNote] = useState('');
 
+  const isSaving = useRef(false);
+
   if (!household) return null;
+
+  const guardedAddInteraction = (data: Parameters<typeof addInteraction>[0]) => {
+    if (isSaving.current) return;
+    isSaving.current = true;
+    addInteraction(data);
+    setTimeout(() => { isSaving.current = false; }, 500);
+  };
 
   const showSuccess = (msg: string) => {
     setSavedMsg(msg);
