@@ -118,9 +118,11 @@ function NudgeSection({ title, clients, onSelect }: {
                 {displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus}
               </span>
             </div>
-            <span className="text-xs text-muted-foreground">
-              {formatDate(h.next_follow_up!, 'MMM d')}
-            </span>
+            {h.next_follow_up && (
+              <span className="text-xs text-muted-foreground">
+                {formatDate(h.next_follow_up, 'MMM d')}
+              </span>
+            )}
           </div>
         );
       })}
