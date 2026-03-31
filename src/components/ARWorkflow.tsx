@@ -32,6 +32,14 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
       .sort((a, b) => b.date.localeCompare(a.date))[0] || null;
   }, [interactions, householdId, household]);
 
+  // Find existing scheduled interaction for this cycle to pre-fill
+  const existingScheduled = useMemo(() => {
+    if (!household) return null;
+    return interactions
+      .filter(i => i.household_id === householdId && i.type === 'Annual review meeting' && i.ar_status === 'Scheduled')
+      .sort((a, b) => b.date.localeCompare(a.date))[0] || null;
+  }, [interactions, householdId, household]);
+
   const initialStep = household ? statusToStep(household.annual_review_status) : 0;
   const [step, setStep] = useState(initialStep);
   const [savedMsg, setSavedMsg] = useState('');
@@ -41,8 +49,8 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
   const [followUpDate, setFollowUpDate] = useState(existingOutreach?.follow_up || '');
   const [outreachNote, setOutreachNote] = useState('');
 
-  // Step 2 - Scheduled
-  const [scheduledDate, setScheduledDate] = useState('');
+  // Step 2 - Scheduled (pre-fill from existing scheduled interaction or household field)
+  const [scheduledDate, setScheduledDate] = useState(existingScheduled?.follow_up || household?.annual_review_scheduled || '');
 
   // Step 3 - Completed
   const [completedDate, setCompletedDate] = useState('');
