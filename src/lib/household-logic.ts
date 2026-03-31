@@ -102,7 +102,7 @@ export function replayInteractions(
 
       switch (interaction.ar_status) {
         case 'Working to Schedule':
-          h.next_follow_up = format(addDays(parseISO(interaction.date), 14), 'yyyy-MM-dd');
+          h.next_follow_up = interaction.follow_up || format(addDays(parseISO(interaction.date), 14), 'yyyy-MM-dd');
           h.annual_review_scheduled = null;
           break;
 
