@@ -54,15 +54,13 @@ function buildDisplayList(sortedInteractions: Interaction[]): DisplayItem[] {
         currentCompleted = false;
       }
       if (i.marks_ar) {
-        // If the current group already has entries, those are from a NEWER cycle
-        // (post this completion). Flush them as an open group first.
+        // Flush any newer open-cycle entries first
         if (currentGroup.length > 0) {
           flushGroup();
         }
-        // Start a new group for just this completed cycle
+        // Start completed group — don't flush yet; older steps will follow
         currentGroup = [i];
         currentCompleted = true;
-        flushGroup();
       } else {
         currentGroup.push(i);
       }
