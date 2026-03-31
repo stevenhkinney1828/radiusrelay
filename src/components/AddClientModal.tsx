@@ -5,6 +5,7 @@ import type { CadenceDays } from '@/types';
 
 interface AddClientModalProps {
   onClose: () => void;
+  onDeleted?: () => void;
   editId?: string;
 }
 
