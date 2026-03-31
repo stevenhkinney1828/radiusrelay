@@ -96,32 +96,35 @@ export default function ClientsTab({ onSelectClient }: ClientsTabProps) {
   );
 }
 
+function getARDateStr(h: Household, displayStatus: string, cycleComplete: boolean): string {
+  if (cycleComplete && h.last_completed_review) {
+    return ' · ' + formatDate(h.last_completed_review, 'MMM d, yyyy');
+  }
+  if (h.annual_review_status === 'Scheduled' && h.annual_review_scheduled) {
+    return ' · ' + formatDate(h.annual_review_scheduled, 'MMM d, yyyy');
+  }
+  if (h.next_review_target) {
+    return ' · ' + new Date(h.next_review_target + 'T00:00:00')
+      .toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  }
+  return '';
+}
+
 function ClientRow({ household, onClick }: { household: Household; onClick: () => void }) {
   const displayStatus = getDisplayARStatus(household);
   const cycleComplete = isCycleComplete(household);
   const today = new Date().toISOString().slice(0, 10);
   const touchOverdue = household.next_quarterly_touch && household.next_quarterly_touch < today;
+  const dateStr = getARDateStr(household, displayStatus, cycleComplete);
+  const pillLabel = (displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus) + dateStr;
 
   return (
     <div className="client-row" onClick={onClick}>
       <span className="font-medium text-sm">{household.identifier}</span>
       <div className="flex items-center gap-2">
-        <div className="flex flex-col items-end">
-          <span className={getARStatusBadgeClass(displayStatus)}>
-            {displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus}
-          </span>
-          {cycleComplete && household.last_completed_review && (
-            <span style={{ fontSize: 10, color: '#6EE7B7', fontWeight: 600, whiteSpace: 'nowrap' }}>
-              {formatDate(household.last_completed_review, 'MMM d, yyyy')}
-            </span>
-          )}
-          {!cycleComplete && household.next_review_target && (
-            <span style={{ fontSize: 10, color: '#94A3B8', fontWeight: 500, whiteSpace: 'nowrap' }}>
-              {new Date(household.next_review_target + 'T00:00:00')
-                .toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-            </span>
-          )}
-        </div>
+        <span className={getARStatusBadgeClass(displayStatus)}>
+          {pillLabel}
+        </span>
         {household.next_quarterly_touch && (
           <span className={`text-xs ${touchOverdue ? 'text-status-overdue font-medium' : 'text-muted-foreground'}`}>
             {formatDate(household.next_quarterly_touch, 'MMM d')}

@@ -131,7 +131,7 @@ function NudgeSection({ title, clients, onSelect }: {
             <div className="flex items-center gap-2">
               <span className="font-medium text-sm">{h.identifier}</span>
               <span className={getARStatusBadgeClass(displayStatus)}>
-                {displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus}
+                {(displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus) + getARDateStr(h)}
               </span>
             </div>
             {h.next_follow_up && (
