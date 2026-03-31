@@ -169,6 +169,30 @@ export default function AddClientModal({ onClose, onDeleted, editId }: AddClient
           </Field>
 
           {editId && (
+            <>
+              <p className="text-xs font-semibold text-muted-foreground mt-2">Key dates</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Next quarterly touch">
+                  <input
+                    type="date"
+                    value={nextTouch}
+                    onChange={e => setNextTouch(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-md text-sm bg-background"
+                  />
+                </Field>
+                <Field label="Next annual review target">
+                  <input
+                    type="date"
+                    value={nextReview}
+                    onChange={e => setNextReview(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-md text-sm bg-background"
+                  />
+                </Field>
+              </div>
+            </>
+          )}
+
+          {editId && (
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
