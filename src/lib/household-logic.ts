@@ -14,10 +14,13 @@ export function isCycleComplete(household: Household): boolean {
   const lastReview = parseISO(last_completed_review);
   const nextTarget = parseISO(next_review_target);
 
-  // Review was done on or after the target
+  // Case 1: review happened on or after the target — always complete
   if (!isBefore(lastReview, nextTarget)) return true;
 
-  // Normal completed cycle: gap is 15 months or less
+  // Case 2: review is before the target — only count if same calendar year
+  if (lastReview.getFullYear() !== nextTarget.getFullYear()) return false;
+
+  // Same year — sanity guard: gap ≤ 15 months
   const gap = differenceInMonths(nextTarget, lastReview);
   return gap <= 15;
 }
