@@ -77,11 +77,24 @@ function Section({ title, clients, onSelect, onMove }: {
         const displayStatus = getDisplayARStatus(h);
         return (
           <div key={h.id} className="client-row" onClick={() => onSelect(h.id)}>
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-sm">{h.identifier}</span>
-              <span className={getARStatusBadgeClass(displayStatus)}>
-                {displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus}
-              </span>
+            <div className="flex flex-col gap-0.5">
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-sm">{h.identifier}</span>
+                <span className={getARStatusBadgeClass(displayStatus)}>
+                  {displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus}
+                </span>
+              </div>
+              {displayStatus === 'Ready to Schedule' && h.next_review_target && (
+                <span className="text-[10px] text-muted-foreground ml-0.5">
+                  Target: {new Date(h.next_review_target + 'T00:00:00')
+                    .toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                </span>
+              )}
+              {isCycleComplete(h) && h.last_completed_review && (
+                <span style={{ fontSize: 10, color: '#6EE7B7', fontWeight: 600 }}>
+                  {formatDate(h.last_completed_review, 'MMM d, yyyy')}
+                </span>
+              )}
             </div>
             {onMove && (
               <button

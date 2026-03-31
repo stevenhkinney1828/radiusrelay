@@ -144,9 +144,15 @@ export default function ClientDetail({ householdId, onBack, onEdit, onARWorkflow
           <span className={getARStatusBadgeClass(displayStatus)}>
             {displayStatus}
           </span>
-          <div className="text-xs text-muted-foreground mt-2">
-            Target: {formatMonthYear(household.next_review_target)}
-          </div>
+          {isCycleComplete(household) && household.last_completed_review ? (
+            <div style={{ fontSize: 11, color: '#065F46', marginTop: 6, fontWeight: 600 }}>
+              {formatDate(household.last_completed_review, 'MMM d, yyyy')}
+            </div>
+          ) : (
+            <div className="text-xs text-muted-foreground mt-2">
+              Target: {formatMonthYear(household.next_review_target)}
+            </div>
+          )}
         </button>
 
         <button onClick={onTouchWorkflow} className="p-4 rounded-lg border bg-card text-left">
