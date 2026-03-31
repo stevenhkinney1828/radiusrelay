@@ -126,7 +126,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
 
   const logPostpone = () => {
     if (!followUpDate) return;
-    addInteraction({
+    guardedAddInteraction({
       household_id: householdId,
       date: new Date().toISOString().slice(0, 10),
       type: 'Annual review meeting',
