@@ -1,4 +1,4 @@
-import { addDays, addMonths, addYears, differenceInMonths, format, isBefore, isAfter, isSameMonth, startOfMonth, parseISO } from 'date-fns';
+import { addDays, addYears, format, parseISO, startOfMonth } from 'date-fns';
 import type { Household, Interaction, ARStatus } from '@/types';
 
 /**
@@ -6,23 +6,12 @@ import type { Household, Interaction, ARStatus } from '@/types';
  * This is the most critical function in the app.
  */
 export function isCycleComplete(household: Household): boolean {
-  const { annual_review_status, last_completed_review, next_review_target } = household;
+  if (household.annual_review_status !== 'Completed') return false;
+  if (!household.last_completed_review) return false;
 
-  if (annual_review_status !== 'Completed') return false;
-  if (!last_completed_review || !next_review_target) return false;
-
-  const lastReview = parseISO(last_completed_review);
-  const nextTarget = parseISO(next_review_target);
-
-  // Case 1: review happened on or after the target — always complete
-  if (!isBefore(lastReview, nextTarget)) return true;
-
-  // Case 2: review is before the target — only count if same calendar year
-  if (lastReview.getFullYear() !== nextTarget.getFullYear()) return false;
-
-  // Same year — sanity guard: gap ≤ 15 months
-  const gap = differenceInMonths(nextTarget, lastReview);
-  return gap <= 15;
+  const completedYear = parseISO(household.last_completed_review).getFullYear();
+  const currentYear = new Date().getFullYear();
+  return completedYear === currentYear;
 }
 
 /**
@@ -46,7 +35,7 @@ export function shouldSuppressTouch(household: Household): boolean {
   if (household.next_review_target && household.next_quarterly_touch && !isCycleComplete(household)) {
     const reviewTarget = parseISO(household.next_review_target);
     const nextTouch = parseISO(household.next_quarterly_touch);
-    if (isBefore(reviewTarget, nextTouch)) return true;
+    if (reviewTarget < nextTouch) return true;
   }
 
   return false;
