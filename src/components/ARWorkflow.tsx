@@ -103,7 +103,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
       ar_status: 'Scheduled',
       plan_updated: false,
       follow_up: scheduledDate,
-      note: '',
+      note: scheduledNote,
     });
     showSuccess('Meeting scheduled ✓');
   };
