@@ -12,6 +12,8 @@ interface ReviewsTabProps {
 export default function ReviewsTab({ onSelectClient, onMoveAR }: ReviewsTabProps) {
   const { households } = useData();
   const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+  const in28Days = addDays(now, 28).toISOString().slice(0, 10);
   const thisMonth = startOfMonth(now);
   const nextMonth = startOfMonth(addMonths(now, 1));
 
@@ -31,6 +33,17 @@ export default function ReviewsTab({ onSelectClient, onMoveAR }: ReviewsTabProps
     const target = parseISO(h.next_review_target!);
     return isSameMonth(target, nextMonth);
   }).sort((a, b) => a.identifier.localeCompare(b.identifier)), [active, nextMonth]);
+
+  const followUpNudges = useMemo(() =>
+    households.filter(h =>
+      h.is_active &&
+      h.next_follow_up &&
+      ['Working to Schedule', 'Postponed'].includes(h.annual_review_status) &&
+      h.next_follow_up >= today &&
+      h.next_follow_up <= in28Days
+    ).sort((a, b) => a.next_follow_up!.localeCompare(b.next_follow_up!)),
+    [households, today, in28Days]
+  );
 
   return (
     <div>
