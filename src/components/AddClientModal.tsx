@@ -27,9 +27,16 @@ export default function AddClientModal({ onClose, onDeleted, editId }: AddClient
   const previewNextTouch = planDate
     ? format(addDays(parseISO(planDate), cadenceDays), 'yyyy-MM-dd')
     : '';
-  const previewNextReview = planDate
-    ? format(startOfMonth(addYears(parseISO(planDate), 1)), 'yyyy-MM-dd')
-    : '';
+  const previewNextReview = (() => {
+    if (!planDate) return '';
+    try {
+      const d = parseISO(planDate);
+      if (isNaN(d.getTime())) return '';
+      return format(startOfMonth(addYears(d, 1)), 'yyyy-MM-dd');
+    } catch {
+      return '';
+    }
+  })();
 
   const [nextTouch, setNextTouch] = useState(existing?.next_quarterly_touch || '');
   const [nextReview, setNextReview] = useState(existing?.next_review_target || '');
