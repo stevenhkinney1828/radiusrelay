@@ -92,7 +92,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
 
   const logScheduled = () => {
     if (!scheduledDate) return;
-    addInteraction({
+    guardedAddInteraction({
       household_id: householdId,
       date: scheduledDate,
       type: 'Annual review meeting',
