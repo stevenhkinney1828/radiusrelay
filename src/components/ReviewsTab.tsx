@@ -50,8 +50,9 @@ export default function ReviewsTab({ onSelectClient, onMoveAR }: ReviewsTabProps
       <Section title={`Overdue (${overdue.length})`} clients={overdue} onSelect={onSelectClient} onMove={onMoveAR} />
       <Section title={`This month (${thisMonthClients.length})`} clients={thisMonthClients} onSelect={onSelectClient} onMove={onMoveAR} />
       <Section title={`Next month (${nextMonthClients.length})`} clients={nextMonthClients} onSelect={onSelectClient} onMove={onMoveAR} />
+      <NudgeSection title={`Follow-up nudges (${followUpNudges.length})`} clients={followUpNudges} onSelect={onSelectClient} />
 
-      {overdue.length === 0 && thisMonthClients.length === 0 && nextMonthClients.length === 0 && (
+      {overdue.length === 0 && thisMonthClients.length === 0 && nextMonthClients.length === 0 && followUpNudges.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
           <p className="text-sm">No reviews due</p>
         </div>
