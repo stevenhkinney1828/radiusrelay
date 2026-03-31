@@ -118,7 +118,7 @@ function NudgeSection({ title, clients, onSelect }: {
               </span>
             </div>
             <span className="text-xs text-muted-foreground">
-              {formatMonthYear(h.next_follow_up!).replace(/\s\d{4}$/, '')}
+              {formatDate(h.next_follow_up!, 'MMM d')}
             </span>
           </div>
         );
