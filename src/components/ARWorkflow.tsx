@@ -51,6 +51,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
 
   // Step 2 - Scheduled (pre-fill from existing scheduled interaction or household field)
   const [scheduledDate, setScheduledDate] = useState(existingScheduled?.follow_up || household?.annual_review_scheduled || '');
+  const [scheduledNote, setScheduledNote] = useState(existingScheduled?.note || '');
 
   // Step 3 - Completed
   const [completedDate, setCompletedDate] = useState('');
