@@ -75,7 +75,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
 
   const logOutreach = () => {
     if (!outreachDate) return;
-    addInteraction({
+    guardedAddInteraction({
       household_id: householdId,
       date: outreachDate,
       type: 'Annual review meeting',
