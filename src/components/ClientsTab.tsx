@@ -98,6 +98,7 @@ export default function ClientsTab({ onSelectClient }: ClientsTabProps) {
 
 function ClientRow({ household, onClick }: { household: Household; onClick: () => void }) {
   const displayStatus = getDisplayARStatus(household);
+  const cycleComplete = isCycleComplete(household);
   const today = new Date().toISOString().slice(0, 10);
   const touchOverdue = household.next_quarterly_touch && household.next_quarterly_touch < today;
 
@@ -105,9 +106,22 @@ function ClientRow({ household, onClick }: { household: Household; onClick: () =
     <div className="client-row" onClick={onClick}>
       <span className="font-medium text-sm">{household.identifier}</span>
       <div className="flex items-center gap-2">
-        <span className={getARStatusBadgeClass(displayStatus)}>
-          {displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus}
-        </span>
+        <div className="flex flex-col items-end">
+          <span className={getARStatusBadgeClass(displayStatus)}>
+            {displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus}
+          </span>
+          {cycleComplete && household.last_completed_review && (
+            <span style={{ fontSize: 10, color: '#6EE7B7', fontWeight: 600, whiteSpace: 'nowrap' }}>
+              {formatDate(household.last_completed_review, 'MMM d, yyyy')}
+            </span>
+          )}
+          {!cycleComplete && household.next_review_target && (
+            <span style={{ fontSize: 10, color: '#94A3B8', fontWeight: 500, whiteSpace: 'nowrap' }}>
+              {new Date(household.next_review_target + 'T00:00:00')
+                .toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+            </span>
+          )}
+        </div>
         {household.next_quarterly_touch && (
           <span className={`text-xs ${touchOverdue ? 'text-status-overdue font-medium' : 'text-muted-foreground'}`}>
             {formatDate(household.next_quarterly_touch, 'MMM d')}
