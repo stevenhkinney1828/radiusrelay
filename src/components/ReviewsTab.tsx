@@ -94,20 +94,20 @@ function Section({ title, clients, onSelect, onMove }: {
         const pillLabel = (displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus) + getARDateStr(h);
         return (
           <div key={h.id} className="client-row" onClick={() => onSelect(h.id)}>
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-sm">{h.identifier}</span>
+            <span className="font-medium text-sm">{h.identifier}</span>
+            <div className="flex items-center gap-3">
               <span className={getARStatusBadgeClass(displayStatus)}>
                 {pillLabel}
               </span>
+              {onMove && (
+                <button
+                  onClick={e => { e.stopPropagation(); onMove(h.id); }}
+                  className="text-xs text-muted-foreground px-2 py-1 rounded border bg-card"
+                >
+                  Move
+                </button>
+              )}
             </div>
-            {onMove && (
-              <button
-                onClick={e => { e.stopPropagation(); onMove(h.id); }}
-                className="text-xs text-muted-foreground px-2 py-1 rounded border bg-card"
-              >
-                Move
-              </button>
-            )}
           </div>
         );
       })}
