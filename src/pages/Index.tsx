@@ -8,6 +8,7 @@ import ClientDetail from '@/components/ClientDetail';
 import ARWorkflow from '@/components/ARWorkflow';
 import TouchWorkflow from '@/components/TouchWorkflow';
 import AdHocWorkflow from '@/components/AdHocWorkflow';
+import CalendarTab from '@/components/CalendarTab';
 import AddClientModal from '@/components/AddClientModal';
 import QuickLogModal from '@/components/QuickLogModal';
 import UndoToast from '@/components/UndoToast';
@@ -64,9 +65,7 @@ function AppContent() {
                 />
               )}
               {activeTab === 'calendar' && (
-                <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-                  <p className="text-sm">Calendar — coming soon</p>
-                </div>
+                <CalendarTab onSelectClient={goToDetail} />
               )}
             </>
           )}
