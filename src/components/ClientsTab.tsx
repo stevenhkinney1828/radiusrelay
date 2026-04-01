@@ -126,9 +126,15 @@ function ClientRow({ household, onClick }: { household: Household; onClick: () =
           {pillLabel}
         </span>
         {household.next_quarterly_touch && (
-          <span className={`text-xs ${touchOverdue ? 'text-status-overdue font-medium' : 'text-muted-foreground'}`}>
-            {formatDate(household.next_quarterly_touch, 'MMM d')}
-          </span>
+          touchOverdue ? (
+            <span className="status-badge status-badge-overdue">
+              Overdue · {formatDate(household.next_quarterly_touch, 'MMM d, yyyy')}
+            </span>
+          ) : (
+            <span className="status-badge" style={{ background: 'hsl(var(--secondary))', color: 'hsl(var(--foreground))' }}>
+              {formatDate(household.next_quarterly_touch, 'MMM d, yyyy')}
+            </span>
+          )
         )}
       </div>
     </div>
