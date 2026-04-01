@@ -21,7 +21,12 @@ export default function TabLayout({ children, onAddClient, onQuickLog }: TabLayo
     <div className="mobile-container relative bg-background">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-card border-b px-4 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-semibold tracking-tight">Radius</h1>
+        <h1 className="text-lg font-semibold tracking-tight">
+          {activeTab === 'reviews' && 'Annual Review Dashboard'}
+          {activeTab === 'touches' && 'Quarterly Touch Dashboard'}
+          {activeTab === 'clients' && 'All Clients'}
+          {activeTab === 'calendar' && 'Activity Calendar'}
+        </h1>
         <div className="flex items-center gap-2">
           {activeTab === 'clients' && onAddClient && (
             <button
