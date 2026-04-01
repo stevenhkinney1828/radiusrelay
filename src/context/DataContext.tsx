@@ -282,6 +282,19 @@ const DEMO_INTERACTIONS: Interaction[] = [
     follow_up: null,
     note: 'Annual review completed, plan updated',
   },
+  {
+    id: 'demo-tara-seed',
+    household_id: 'demo-tara',
+    date: '2025-07-01',
+    type: 'Annual review meeting',
+    touch_status: null,
+    counts_cadence: false,
+    marks_ar: true,
+    ar_status: 'Completed',
+    plan_updated: false,
+    follow_up: null,
+    note: 'Initial financial plan',
+  },
 ];
 export function DataProvider({ children }: { children: ReactNode }) {
   const [households, setHouseholds] = useState<Household[]>(DEMO_HOUSEHOLDS);
