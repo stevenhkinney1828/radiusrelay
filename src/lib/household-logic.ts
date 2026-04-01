@@ -101,7 +101,12 @@ export function replayInteractions(
 
         case 'Completed':
           h.last_completed_review = interaction.date;
-          if (interaction.plan_updated) {
+          if (interaction.is_seed) {
+            // Seed interaction: only set last_completed_review and status.
+            // Do NOT reset next_review_target, next_quarterly_touch, or last_counted_touch
+            // — those come from the Add Client form.
+          } else {
+            // Non-seed: always run full reset regardless of plan_updated
             const reviewDate = parseISO(interaction.date);
             h.next_review_target = format(startOfMonth(addYears(reviewDate, 1)), 'yyyy-MM-dd');
             h.last_counted_touch = interaction.date;

@@ -308,7 +308,7 @@ function AREditPanel({
             onChange={e => setEditPlanUpdated(e.target.checked)}
             className="rounded border-primary"
           />
-          Financial plan was updated
+          Financial plan was updated (for your reference only)
         </label>
 
         {hasWarning && (

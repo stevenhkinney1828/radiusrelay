@@ -241,7 +241,7 @@ export default function ARWorkflow({ householdId, onBack }: ARWorkflowProps) {
             </Field>
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={planUpdated} onChange={e => setPlanUpdated(e.target.checked)} className="rounded" />
-              Financial plan was updated
+              Financial plan was updated (for your reference only)
             </label>
             <Field label="Note">
               <input type="text" value={completedNote} onChange={e => setCompletedNote(e.target.value)}

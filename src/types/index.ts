@@ -47,6 +47,7 @@ export interface Interaction {
   plan_updated: boolean;
   follow_up: string | null;
   note: string;
+  is_seed?: boolean;
 }
 
 export type SortOption = 'az' | 'next-ar' | 'next-touch' | 'ar-status';
