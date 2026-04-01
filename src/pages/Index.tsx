@@ -65,7 +65,7 @@ function AppContent() {
                 />
               )}
               {activeTab === 'calendar' && (
-                <CalendarTab onSelectClient={goToDetail} />
+                <CalendarTab onSelectClient={goToDetail} onEditClient={(id) => setEditClientId(id)} />
               )}
             </>
           )}
