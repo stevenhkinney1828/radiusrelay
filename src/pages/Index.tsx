@@ -65,9 +65,7 @@ function AppContent() {
                 />
               )}
               {activeTab === 'calendar' && (
-                <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-                  <p className="text-sm">Calendar — coming soon</p>
-                </div>
+                <CalendarTab onSelectClient={goToDetail} />
               )}
             </>
           )}
