@@ -88,24 +88,24 @@ export default function ClientsTab({ onSelectClient }: ClientsTabProps) {
       {/* Column headers */}
       <div className="flex items-center justify-between px-4 py-2 border-b bg-secondary/40">
         <button
-          onClick={() => setSort('az')}
+          onClick={() => { if (sort === 'az') { setSortDir(d => d === 'asc' ? 'desc' : 'asc'); } else { setSort('az'); setSortDir('asc'); } }}
           className={`text-xs font-semibold uppercase tracking-wider transition-colors ${sort === 'az' ? 'text-foreground' : 'text-muted-foreground'}`}
         >
-          Client {sort === 'az' ? '↑' : ''}
+          Client{sort === 'az' ? (sortDir === 'asc' ? ' ↑' : ' ↓') : ''}
         </button>
         <div className="flex items-center gap-6">
           <button
-            onClick={() => setSort('next-ar')}
+            onClick={() => { if (sort === 'next-ar') { setSortDir(d => d === 'asc' ? 'desc' : 'asc'); } else { setSort('next-ar'); setSortDir('asc'); } }}
             className={`text-xs font-semibold uppercase tracking-wider transition-colors ${sort === 'next-ar' ? 'text-foreground' : 'text-muted-foreground'}`}
           >
-            Annual Review {sort === 'next-ar' ? '↑' : ''}
+            Annual Review{sort === 'next-ar' ? (sortDir === 'asc' ? ' ↑' : ' ↓') : ''}
           </button>
           <div className="w-36 flex justify-end">
             <button
-              onClick={() => setSort('next-touch')}
+              onClick={() => { if (sort === 'next-touch') { setSortDir(d => d === 'asc' ? 'desc' : 'asc'); } else { setSort('next-touch'); setSortDir('asc'); } }}
               className={`text-xs font-semibold uppercase tracking-wider transition-colors ${sort === 'next-touch' ? 'text-foreground' : 'text-muted-foreground'}`}
             >
-              Next Touch {sort === 'next-touch' ? '↑' : ''}
+              Next Touch{sort === 'next-touch' ? (sortDir === 'asc' ? ' ↑' : ' ↓') : ''}
             </button>
           </div>
         </div>
