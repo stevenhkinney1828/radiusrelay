@@ -415,7 +415,9 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
 
       {/* Legend Detail Modal */}
       {legendFilter && (() => {
-        const year = new Date().getFullYear();
+        const year = currentMonth.getFullYear();
+        const currentYear = new Date().getFullYear();
+        const isCurrentYear = year === currentYear;
         const legendDetailMonths = Array.from({ length: 12 }, (_, i) => {
           const monthStart = new Date(year, i, 1);
           const monthKey = format(monthStart, 'yyyy-MM');
@@ -429,7 +431,12 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
         return (
           <div className="fixed inset-0 z-50 bg-background flex flex-col max-w-[480px] mx-auto">
             <div className="flex items-center justify-between px-4 py-3 border-b bg-card sticky top-0 z-10">
-              <h2 className="text-base font-semibold">{kindFullLabel[legendFilter]}</h2>
+              <div>
+                <h2 className="text-base font-semibold">{kindFullLabel[legendFilter]}</h2>
+                <span className="text-xs text-muted-foreground">
+                  {year} · {isCurrentYear ? 'Current year' : `${year - currentYear > 0 ? '+' : ''}${year - currentYear} year${Math.abs(year - currentYear) !== 1 ? 's' : ''} from today`}
+                </span>
+              </div>
               <button
                 onClick={() => setLegendFilter(null)}
                 className="flex items-center gap-1 text-sm text-muted-foreground"
@@ -437,7 +444,20 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
                 <X size={16} /> Close
               </button>
             </div>
+            {!isCurrentYear && (
+              <div className={`px-4 py-2.5 flex items-center gap-2 text-sm font-medium ${year < currentYear ? 'bg-amber-100 text-amber-800 border-b border-amber-200' : 'bg-blue-100 text-blue-800 border-b border-blue-200'}`}>
+                <span className="text-base">{year < currentYear ? '⚠️' : '🔭'}</span>
+                <span>{year < currentYear ? `You are viewing ${year} — this is historical data` : `You are viewing ${year} — this is future data`}</span>
+              </div>
+            )}
             <div className={`h-1 w-full ${getDotColor(legendFilter)}`} />
+            {year < currentYear && legendFilter !== 'completed' && (
+              <div className="px-4 py-2 bg-secondary/40 border-b">
+                <p className="text-xs text-muted-foreground">
+                  Historical data is only available for Completed reviews. Current scheduled dates for touches, targets, and nudges reflect today's values only.
+                </p>
+              </div>
+            )}
             <div className="overflow-y-auto flex-1 pb-8">
               {legendDetailMonths.map(({ label, monthEvents }) => (
                 <div key={label}>
