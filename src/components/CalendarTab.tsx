@@ -46,9 +46,10 @@ function getKindLabel(kind: CalendarEvent['kind']): string {
 
 interface CalendarTabProps {
   onSelectClient: (id: string) => void;
+  onEditClient: (id: string) => void;
 }
 
-export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
+export default function CalendarTab({ onSelectClient, onEditClient }: CalendarTabProps) {
   const { households, interactions } = useData();
 
   const events = useMemo(() => {
