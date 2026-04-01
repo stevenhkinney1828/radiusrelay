@@ -208,11 +208,40 @@ export default function ClientDetail({ householdId, onBack, onEdit, onARWorkflow
             item.kind === 'flat' ? (
               <TimelineRow key={item.interaction.id} interaction={item.interaction} />
             ) : (
-              <ARGroupCard key={`ar-${idx}`} completed={item.completed} entries={item.entries} />
+              <ARGroupCard
+                key={`ar-${idx}`}
+                completed={item.completed}
+                entries={item.entries}
+                onEditCompleted={item.completed ? (entry) => {
+                  setEditingAR(entry);
+                  setEditDate(entry.date);
+                  setEditPlanUpdated(entry.plan_updated);
+                } : undefined}
+              />
             )
           )
         )}
       </div>
+
+      {/* Edit AR Completion Panel */}
+      {editingAR && (
+        <AREditPanel
+          interaction={editingAR}
+          editDate={editDate}
+          setEditDate={setEditDate}
+          editPlanUpdated={editPlanUpdated}
+          setEditPlanUpdated={setEditPlanUpdated}
+          allInteractions={clientInteractions}
+          onSave={() => {
+            updateInteraction(editingAR.id, {
+              date: editDate,
+              plan_updated: editPlanUpdated,
+            });
+            setEditingAR(null);
+          }}
+          onCancel={() => setEditingAR(null)}
+        />
+      )}
     </div>
   );
 }
