@@ -91,7 +91,7 @@ function TouchSection({ title, clients, onSelect, isOverdue }: {
                 Overdue · {formatDate(h.next_quarterly_touch, 'MMM d, yyyy')}
               </span>
             ) : (
-              <span className="status-badge" style={{ background: 'hsl(var(--secondary))', color: 'hsl(var(--foreground))' }}>
+              <span className="status-badge bg-indigo-100 text-indigo-700">
                 {formatDate(h.next_quarterly_touch, 'MMM d, yyyy')}
               </span>
             )}

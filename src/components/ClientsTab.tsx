@@ -143,7 +143,7 @@ function ClientRow({ household, onClick }: { household: Household; onClick: () =
                 Overdue · {formatDate(household.next_quarterly_touch, 'MMM d, yyyy')}
               </span>
             ) : (
-              <span className="status-badge" style={{ background: 'hsl(var(--secondary))', color: 'hsl(var(--foreground))' }}>
+              <span className="status-badge bg-indigo-100 text-indigo-700">
                 {formatDate(household.next_quarterly_touch, 'MMM d, yyyy')}
               </span>
             )
