@@ -360,6 +360,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       plan_updated: false, // CRITICAL: must be false
       follow_up: null,
       note: data.planNote || 'Initial financial plan',
+      is_seed: true,
     };
 
     setHouseholds(prev => [...prev, newHousehold]);
