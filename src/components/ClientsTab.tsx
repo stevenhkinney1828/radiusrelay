@@ -81,11 +81,26 @@ export default function ClientsTab({ onSelectClient }: ClientsTabProps) {
 
       {/* Column headers */}
       <div className="flex items-center justify-between px-4 py-2 border-b bg-secondary/40">
-        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Client</span>
+        <button
+          onClick={() => setSort('az')}
+          className={`text-xs font-semibold uppercase tracking-wider transition-colors ${sort === 'az' ? 'text-foreground' : 'text-muted-foreground'}`}
+        >
+          Client {sort === 'az' ? '↑' : ''}
+        </button>
         <div className="flex items-center gap-6">
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Annual Review</span>
+          <button
+            onClick={() => setSort('next-ar')}
+            className={`text-xs font-semibold uppercase tracking-wider transition-colors ${sort === 'next-ar' ? 'text-foreground' : 'text-muted-foreground'}`}
+          >
+            Annual Review {sort === 'next-ar' ? '↑' : ''}
+          </button>
           <div className="w-36 flex justify-end">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Next Touch</span>
+            <button
+              onClick={() => setSort('next-touch')}
+              className={`text-xs font-semibold uppercase tracking-wider transition-colors ${sort === 'next-touch' ? 'text-foreground' : 'text-muted-foreground'}`}
+            >
+              Next Touch {sort === 'next-touch' ? '↑' : ''}
+            </button>
           </div>
         </div>
       </div>
