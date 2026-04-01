@@ -220,6 +220,7 @@ const DEMO_INTERACTIONS: Interaction[] = [
     plan_updated: false,
     follow_up: null,
     note: 'Annual review',
+    is_seed: true,
   },
   {
     id: 'demo-martha-touch-1',
