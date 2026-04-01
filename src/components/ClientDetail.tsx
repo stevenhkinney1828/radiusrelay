@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useData } from '@/context/DataContext';
 import { getDisplayARStatus, getARStatusBadgeClass, formatDate, isCycleComplete } from '@/lib/household-logic';
-import { ChevronLeft, Edit2, Star } from 'lucide-react';
+import { ChevronLeft, Edit2, Star, X } from 'lucide-react';
 import { parseISO, subMonths } from 'date-fns';
 import type { Interaction } from '@/types';
 
