@@ -134,6 +134,21 @@ const DEMO_HOUSEHOLDS: Household[] = [
     plan_note: '',
     is_active: true,
   },
+  {
+    id: 'demo-tara',
+    identifier: 'Tara',
+    cadence_days: 90,
+    last_counted_touch: '2025-10-15',
+    next_quarterly_touch: '2026-05-15',
+    annual_review_status: 'Completed',
+    annual_review_scheduled: null,
+    last_completed_review: '2025-07-01',
+    next_review_target: '2026-07-01',
+    next_follow_up: null,
+    note: '',
+    plan_note: '',
+    is_active: true,
+  },
 ];
 
 const DEMO_INTERACTIONS: Interaction[] = [
@@ -266,6 +281,19 @@ const DEMO_INTERACTIONS: Interaction[] = [
     plan_updated: true,
     follow_up: null,
     note: 'Annual review completed, plan updated',
+  },
+  {
+    id: 'demo-tara-seed',
+    household_id: 'demo-tara',
+    date: '2025-07-01',
+    type: 'Annual review meeting',
+    touch_status: null,
+    counts_cadence: false,
+    marks_ar: true,
+    ar_status: 'Completed',
+    plan_updated: false,
+    follow_up: null,
+    note: 'Initial financial plan',
   },
 ];
 export function DataProvider({ children }: { children: ReactNode }) {
