@@ -82,9 +82,11 @@ export default function ClientsTab({ onSelectClient }: ClientsTabProps) {
       {/* Column headers */}
       <div className="flex items-center justify-between px-4 py-2 border-b bg-secondary/40">
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Client</span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-6">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Annual Review</span>
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider w-24 text-right">Next Touch</span>
+          <div className="w-36 flex justify-end">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Next Touch</span>
+          </div>
         </div>
       </div>
 
