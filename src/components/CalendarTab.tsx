@@ -125,6 +125,7 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
 
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()));
   const [dayModalDate, setDayModalDate] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'month' | 'quarter'>('month');
 
   const gridDays = useMemo(() => {
     const start = startOfWeek(startOfMonth(currentMonth), { weekStartsOn: 0 });
@@ -141,96 +142,222 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
     return map;
   }, [events]);
 
+  const quarterMonths = useMemo(() => [
+    startOfMonth(new Date()),
+    startOfMonth(addMonths(new Date(), 1)),
+    startOfMonth(addMonths(new Date(), 2)),
+  ], []);
+
+  const quarterGrids = useMemo(() => {
+    return quarterMonths.map(month => {
+      const start = startOfWeek(startOfMonth(month), { weekStartsOn: 0 });
+      const end = endOfWeek(endOfMonth(month), { weekStartsOn: 0 });
+      return {
+        month,
+        days: eachDayOfInterval({ start, end }),
+      };
+    });
+  }, [quarterMonths]);
+
   return (
     <div className="flex flex-col">
-      {/* Month navigation header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b">
-        <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-          className="p-2 text-muted-foreground">
-          <ChevronLeft className="w-5 h-5" />
+      {/* View toggle */}
+      <div className="flex items-center justify-center gap-2 px-4 py-2 border-b">
+        <button
+          onClick={() => setViewMode('month')}
+          className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors ${viewMode === 'month' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground'}`}
+        >
+          Month
         </button>
-        <span className="font-semibold text-sm">
-          {format(currentMonth, 'MMMM yyyy')}
-        </span>
-        <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-          className="p-2 text-muted-foreground">
-          <ChevronRight className="w-5 h-5" />
+        <button
+          onClick={() => setViewMode('quarter')}
+          className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors ${viewMode === 'quarter' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground'}`}
+        >
+          Quarter
         </button>
       </div>
 
-      {/* Day of week headers */}
-      <div className="grid grid-cols-7 text-center border-b">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-          <div key={d} className="text-[11px] font-medium text-muted-foreground py-2">
-            {d}
-          </div>
-        ))}
-      </div>
+      {/* Month navigation header - only in month view */}
+      {viewMode === 'month' && (
+        <div className="flex items-center justify-between px-4 py-3 border-b">
+          <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+            className="p-2 text-muted-foreground">
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <span className="font-semibold text-sm">
+            {format(currentMonth, 'MMMM yyyy')}
+          </span>
+          <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+            className="p-2 text-muted-foreground">
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      )}
 
-      {/* Calendar grid */}
-      <div className="grid grid-cols-7">
-        {gridDays.map(day => {
-          const dateStr = format(day, 'yyyy-MM-dd');
-          const isCurrentMonth = isSameMonth(day, currentMonth);
-          const isToday = isSameDay(day, new Date());
-          const dayEvents = eventsByDate[dateStr] || [];
-          const visibleEvents = dayEvents.slice(0, 2);
-          const overflowCount = dayEvents.length - visibleEvents.length;
-
-          return (
-            <div
-              key={dateStr}
-              onClick={() => dayEvents.length > 0 && setDayModalDate(dateStr)}
-              className={`min-h-[72px] border-b border-r p-1 flex flex-col gap-0.5
-                ${!isCurrentMonth ? 'opacity-40' : ''}
-                ${dayEvents.length > 0 ? 'cursor-pointer hover:bg-secondary/50' : ''}`}
-            >
-              {/* Day number */}
-              <div className={`text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full
-                ${isToday ? 'bg-primary text-primary-foreground' : 'text-foreground'}`}>
-                {format(day, 'd')}
+      {/* Month view */}
+      {viewMode === 'month' && (
+        <>
+          {/* Day of week headers */}
+          <div className="grid grid-cols-7 text-center border-b">
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
+              <div key={d} className="text-[11px] font-medium text-muted-foreground py-2">
+                {d}
               </div>
+            ))}
+          </div>
 
-              {/* Event chips */}
-              <div className="flex flex-col gap-0.5 overflow-hidden">
-                {visibleEvents.map((e, idx) => (
-                  <div
-                    key={idx}
-                    onClick={(ev) => {
-                      ev.stopPropagation();
-                      onSelectClient(e.householdId);
-                    }}
-                    className={`text-[10px] font-medium px-1 py-0.5 rounded truncate cursor-pointer ${getChipStyle(e.kind)}`}
-                  >
-                    {e.identifier} {getKindLabel(e.kind)}
+          {/* Calendar grid */}
+          <div className="grid grid-cols-7">
+            {gridDays.map(day => {
+              const dateStr = format(day, 'yyyy-MM-dd');
+              const isCurrentMonth = isSameMonth(day, currentMonth);
+              const isToday = isSameDay(day, new Date());
+              const dayEvents = eventsByDate[dateStr] || [];
+              const visibleEvents = dayEvents.slice(0, 2);
+              const overflowCount = dayEvents.length - visibleEvents.length;
+
+              return (
+                <div
+                  key={dateStr}
+                  onClick={() => dayEvents.length > 0 && setDayModalDate(dateStr)}
+                  className={`min-h-[72px] border-b border-r p-1 flex flex-col gap-0.5
+                    ${!isCurrentMonth ? 'opacity-40' : ''}
+                    ${dayEvents.length > 0 ? 'cursor-pointer hover:bg-secondary/50' : ''}`}
+                >
+                  <div className={`text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full
+                    ${isToday ? 'bg-primary text-primary-foreground' : 'text-foreground'}`}>
+                    {format(day, 'd')}
+                  </div>
+                  <div className="flex flex-col gap-0.5 overflow-hidden">
+                    {visibleEvents.map((e, idx) => (
+                      <div
+                        key={idx}
+                        onClick={(ev) => {
+                          ev.stopPropagation();
+                          onSelectClient(e.householdId);
+                        }}
+                        className={`text-[10px] font-medium px-1 py-0.5 rounded truncate cursor-pointer ${getChipStyle(e.kind)}`}
+                      >
+                        {e.identifier} {getKindLabel(e.kind)}
+                      </div>
+                    ))}
+                    {overflowCount > 0 && (
+                      <div className="text-[10px] text-muted-foreground px-1">
+                        +{overflowCount} more
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Legend */}
+          <div className="flex flex-wrap gap-3 px-4 py-3 border-t text-[11px] text-muted-foreground">
+            {[
+              { kind: 'touch' as const, label: 'Quarterly Touch' },
+              { kind: 'ar-target' as const, label: 'AR Target' },
+              { kind: 'scheduled' as const, label: 'Scheduled' },
+              { kind: 'nudge' as const, label: 'Follow-up' },
+              { kind: 'completed' as const, label: 'Completed' },
+            ].map(({ kind, label }) => (
+              <div key={kind} className="flex items-center gap-1">
+                <div className={`w-2.5 h-2.5 rounded-sm ${getChipStyle(kind).split(' ')[0]}`} />
+                {label}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Quarter view */}
+      {viewMode === 'quarter' && (
+        <div className="overflow-y-auto pb-20">
+          {quarterGrids.map(({ month, days }) => (
+            <div key={format(month, 'yyyy-MM')} className="mb-6">
+              <button
+                onClick={() => {
+                  setCurrentMonth(month);
+                  setViewMode('month');
+                }}
+                className="w-full flex items-center justify-between px-4 py-2 border-b bg-secondary/40"
+              >
+                <span className="text-sm font-semibold text-blue-600">
+                  {format(month, 'MMMM yyyy')}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Tap to view →
+                </span>
+              </button>
+              <div className="grid grid-cols-7 border-b">
+                {['S','M','T','W','T','F','S'].map((d, i) => (
+                  <div key={i} className="text-center text-[10px] font-medium text-muted-foreground py-1">
+                    {d}
                   </div>
                 ))}
-                {overflowCount > 0 && (
-                  <div className="text-[10px] text-muted-foreground px-1">
-                    +{overflowCount} more
-                  </div>
-                )}
+              </div>
+              <div className="grid grid-cols-7">
+                {days.map(day => {
+                  const dateStr = format(day, 'yyyy-MM-dd');
+                  const isCurrentMonth = isSameMonth(day, month);
+                  const isToday = isSameDay(day, new Date());
+                  const dayEvents = eventsByDate[dateStr] || [];
+                  return (
+                    <div
+                      key={dateStr}
+                      onClick={() => {
+                        if (dayEvents.length > 0) {
+                          setCurrentMonth(month);
+                          setViewMode('month');
+                          setDayModalDate(dateStr);
+                        }
+                      }}
+                      className={`min-h-[44px] border-b border-r p-1
+                        ${!isCurrentMonth ? 'bg-muted/30' : 'bg-background'}
+                        ${isToday ? 'bg-blue-50' : ''}
+                        ${dayEvents.length > 0 ? 'cursor-pointer' : ''}`}
+                    >
+                      <div className={`text-[10px] font-medium mb-1 w-4 h-4 flex items-center justify-center rounded-full
+                        ${isToday ? 'bg-primary text-primary-foreground' : isCurrentMonth ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {format(day, 'd')}
+                      </div>
+                      {dayEvents.length > 0 && (
+                        <div className="flex flex-wrap gap-0.5">
+                          {dayEvents.slice(0, 4).map((e, idx) => (
+                            <div
+                              key={idx}
+                              className={`w-1.5 h-1.5 rounded-full ${getDotColor(e.kind)}`}
+                            />
+                          ))}
+                          {dayEvents.length > 4 && (
+                            <span className="text-[8px] text-muted-foreground leading-none">
+                              +{dayEvents.length - 4}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
-          );
-        })}
-      </div>
-
-      {/* Legend */}
-      <div className="flex flex-wrap gap-3 px-4 py-3 border-t text-[11px] text-muted-foreground">
-        {[
-          { kind: 'touch' as const, label: 'Quarterly Touch' },
-          { kind: 'ar-target' as const, label: 'AR Target' },
-          { kind: 'scheduled' as const, label: 'Scheduled' },
-          { kind: 'nudge' as const, label: 'Follow-up' },
-          { kind: 'completed' as const, label: 'Completed' },
-        ].map(({ kind, label }) => (
-          <div key={kind} className="flex items-center gap-1">
-            <div className={`w-2.5 h-2.5 rounded-sm ${getChipStyle(kind).split(' ')[0]}`} />
-            {label}
+          ))}
+          <div className="flex flex-wrap gap-3 px-4 py-3 border-t">
+            {[
+              { kind: 'touch' as const, label: 'Quarterly Touch' },
+              { kind: 'ar-target' as const, label: 'AR Target' },
+              { kind: 'scheduled' as const, label: 'Scheduled' },
+              { kind: 'nudge' as const, label: 'Follow-up' },
+              { kind: 'completed' as const, label: 'Completed' },
+            ].map(({ kind, label }) => (
+              <div key={kind} className="flex items-center gap-1.5">
+                <div className={`w-2.5 h-2.5 rounded-full ${getDotColor(kind)}`} />
+                <span className="text-[10px] text-muted-foreground">{label}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
       {/* Day modal */}
       {dayModalDate && (() => {
