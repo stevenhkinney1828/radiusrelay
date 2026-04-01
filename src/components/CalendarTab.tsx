@@ -126,6 +126,15 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()));
   const [dayModalDate, setDayModalDate] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'month' | 'quarter'>('month');
+  const [legendFilter, setLegendFilter] = useState<CalendarEvent['kind'] | null>(null);
+
+  const kindFullLabel: Record<CalendarEvent['kind'], string> = {
+    touch: 'Quarterly Touch',
+    'ar-target': 'Annual Review Target',
+    scheduled: 'Scheduled Meetings',
+    nudge: 'Follow-up Nudges',
+    completed: 'Completed Reviews',
+  };
 
   const gridDays = useMemo(() => {
     const start = startOfWeek(startOfMonth(currentMonth), { weekStartsOn: 0 });
