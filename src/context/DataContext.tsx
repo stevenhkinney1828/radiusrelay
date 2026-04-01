@@ -58,9 +58,127 @@ if (import.meta.hot) {
   });
 }
 
+const DEMO_HOUSEHOLDS: Household[] = [
+  {
+    id: 'demo-steven',
+    identifier: 'Steven',
+    cadence_days: 90,
+    last_counted_touch: '2026-01-15',
+    next_quarterly_touch: '2026-04-15',
+    annual_review_status: 'Completed',
+    annual_review_scheduled: null,
+    last_completed_review: '2026-01-15',
+    next_review_target: '2027-01-01',
+    next_follow_up: null,
+    note: '',
+    plan_note: '',
+    is_active: true,
+  },
+  {
+    id: 'demo-kevin',
+    identifier: 'Kevin',
+    cadence_days: 90,
+    last_counted_touch: '2025-03-02',
+    next_quarterly_touch: '2026-03-15',
+    annual_review_status: 'Completed',
+    annual_review_scheduled: null,
+    last_completed_review: '2025-03-02',
+    next_review_target: '2026-03-01',
+    next_follow_up: null,
+    note: '',
+    plan_note: '',
+    is_active: true,
+  },
+  {
+    id: 'demo-charles',
+    identifier: 'Charles',
+    cadence_days: 90,
+    last_counted_touch: '2025-04-15',
+    next_quarterly_touch: '2026-07-04',
+    annual_review_status: 'Completed',
+    annual_review_scheduled: null,
+    last_completed_review: '2025-04-15',
+    next_review_target: '2026-04-01',
+    next_follow_up: null,
+    note: '',
+    plan_note: '',
+    is_active: true,
+  },
+  {
+    id: 'demo-debbie',
+    identifier: 'Debbie',
+    cadence_days: 90,
+    last_counted_touch: '2026-03-15',
+    next_quarterly_touch: '2026-06-13',
+    annual_review_status: 'Completed',
+    annual_review_scheduled: null,
+    last_completed_review: '2026-03-15',
+    next_review_target: '2027-03-01',
+    next_follow_up: null,
+    note: '',
+    plan_note: '',
+    is_active: true,
+  },
+];
+
+const DEMO_INTERACTIONS: Interaction[] = [
+  {
+    id: 'demo-steven-seed',
+    household_id: 'demo-steven',
+    date: '2026-01-15',
+    type: 'Annual review meeting',
+    touch_status: null,
+    counts_cadence: false,
+    marks_ar: true,
+    ar_status: 'Completed',
+    plan_updated: false,
+    follow_up: null,
+    note: 'Initial financial plan',
+  },
+  {
+    id: 'demo-kevin-seed',
+    household_id: 'demo-kevin',
+    date: '2025-03-02',
+    type: 'Annual review meeting',
+    touch_status: null,
+    counts_cadence: false,
+    marks_ar: true,
+    ar_status: 'Completed',
+    plan_updated: false,
+    follow_up: null,
+    note: 'Initial financial plan',
+  },
+  {
+    id: 'demo-charles-seed',
+    household_id: 'demo-charles',
+    date: '2025-04-15',
+    type: 'Annual review meeting',
+    touch_status: null,
+    counts_cadence: false,
+    marks_ar: true,
+    ar_status: 'Completed',
+    plan_updated: false,
+    follow_up: null,
+    note: 'Initial financial plan',
+  },
+  {
+    id: 'demo-debbie-seed',
+    household_id: 'demo-debbie',
+    date: '2026-03-15',
+    type: 'Annual review meeting',
+    touch_status: null,
+    counts_cadence: false,
+    marks_ar: true,
+    ar_status: 'Completed',
+    plan_updated: false,
+    follow_up: null,
+    note: 'Initial financial plan',
+  },
+];
+
 export function DataProvider({ children }: { children: ReactNode }) {
-  const [households, setHouseholds] = useState<Household[]>([]);
-  const [interactions, setInteractions] = useState<Interaction[]>([]);
+  const [households, setHouseholds] = useState<Household[]>(DEMO_HOUSEHOLDS);
+  const [interactions, setInteractions] = useState<Interaction[]>(DEMO_INTERACTIONS);
   const [undoState, setUndoState] = useState<UndoState | null>(null);
   const [undoTimer, setUndoTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
