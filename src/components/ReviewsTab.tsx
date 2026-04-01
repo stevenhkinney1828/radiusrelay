@@ -129,17 +129,17 @@ function NudgeSection({ title, clients, onSelect }: {
         const displayStatus = getDisplayARStatus(h);
         return (
           <div key={h.id} className="client-row" onClick={() => onSelect(h.id)}>
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-sm">{h.identifier}</span>
+            <span className="font-medium text-sm">{h.identifier}</span>
+            <div className="flex items-center gap-3">
               <span className={getARStatusBadgeClass(displayStatus)}>
                 {(displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus) + getARDateStr(h)}
               </span>
+              {h.next_follow_up && (
+                <span className="text-xs text-muted-foreground">
+                  {formatDate(h.next_follow_up, 'MMM d')}
+                </span>
+              )}
             </div>
-            {h.next_follow_up && (
-              <span className="text-xs text-muted-foreground">
-                {formatDate(h.next_follow_up, 'MMM d')}
-              </span>
-            )}
           </div>
         );
       })}
