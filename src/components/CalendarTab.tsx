@@ -46,9 +46,10 @@ function getKindLabel(kind: CalendarEvent['kind']): string {
 
 interface CalendarTabProps {
   onSelectClient: (id: string) => void;
+  onEditClient: (id: string) => void;
 }
 
-export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
+export default function CalendarTab({ onSelectClient, onEditClient }: CalendarTabProps) {
   const { households, interactions } = useData();
 
   const events = useMemo(() => {
@@ -480,9 +481,23 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
                         className="flex items-center justify-between pl-8 pr-4 py-3 border-b border-l-2 border-l-secondary ml-4 cursor-pointer active:bg-accent transition-colors"
                       >
                         <span className="text-sm font-medium">{e.identifier}</span>
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getChipStyle(e.kind)}`}>
-                          {format(parseISO(e.date), 'MMM d, yyyy')}
-                        </span>
+                        {(e.kind === 'touch' || e.kind === 'ar-target') ? (
+                          <button
+                            onClick={ev => {
+                              ev.stopPropagation();
+                              setLegendFilter(null);
+                              onEditClient(e.householdId);
+                            }}
+                            className={`text-xs font-medium px-2 py-0.5 rounded-full ${getChipStyle(e.kind)} underline decoration-dotted cursor-pointer active:opacity-70 transition-opacity`}
+                            title={e.kind === 'touch' ? 'Tap to edit next touch date' : 'Tap to edit review target'}
+                          >
+                            {format(parseISO(e.date), 'MMM d, yyyy')} ✎
+                          </button>
+                        ) : (
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getChipStyle(e.kind)}`}>
+                            {format(parseISO(e.date), 'MMM d, yyyy')}
+                          </span>
+                        )}
                       </div>
                     ))
                   )}
