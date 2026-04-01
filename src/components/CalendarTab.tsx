@@ -126,6 +126,15 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()));
   const [dayModalDate, setDayModalDate] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'month' | 'quarter'>('month');
+  const [legendFilter, setLegendFilter] = useState<CalendarEvent['kind'] | null>(null);
+
+  const kindFullLabel: Record<CalendarEvent['kind'], string> = {
+    touch: 'Quarterly Touch',
+    'ar-target': 'Annual Review Target',
+    scheduled: 'Scheduled Meetings',
+    nudge: 'Follow-up Nudges',
+    completed: 'Completed Reviews',
+  };
 
   const gridDays = useMemo(() => {
     const start = startOfWeek(startOfMonth(currentMonth), { weekStartsOn: 0 });
@@ -261,10 +270,14 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
               { kind: 'nudge' as const, label: 'Follow-up' },
               { kind: 'completed' as const, label: 'Completed' },
             ].map(({ kind, label }) => (
-              <div key={kind} className="flex items-center gap-1">
-                <div className={`w-2.5 h-2.5 rounded-sm ${getChipStyle(kind).split(' ')[0]}`} />
-                {label}
-              </div>
+              <button
+                key={kind}
+                onClick={() => setLegendFilter(kind)}
+                className="flex items-center gap-1.5 active:opacity-70 transition-opacity"
+              >
+                <div className={`w-2.5 h-2.5 rounded-full ${getDotColor(kind)}`} />
+                <span className="text-[10px] text-muted-foreground underline decoration-dotted">{label}</span>
+              </button>
             ))}
           </div>
         </>
@@ -350,10 +363,14 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
               { kind: 'nudge' as const, label: 'Follow-up' },
               { kind: 'completed' as const, label: 'Completed' },
             ].map(({ kind, label }) => (
-              <div key={kind} className="flex items-center gap-1.5">
+              <button
+                key={kind}
+                onClick={() => setLegendFilter(kind)}
+                className="flex items-center gap-1.5 active:opacity-70 transition-opacity"
+              >
                 <div className={`w-2.5 h-2.5 rounded-full ${getDotColor(kind)}`} />
-                <span className="text-[10px] text-muted-foreground">{label}</span>
-              </div>
+                <span className="text-[10px] text-muted-foreground underline decoration-dotted">{label}</span>
+              </button>
             ))}
           </div>
         </div>
@@ -391,6 +408,66 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Legend Detail Modal */}
+      {legendFilter && (() => {
+        const year = new Date().getFullYear();
+        const legendDetailMonths = Array.from({ length: 12 }, (_, i) => {
+          const monthStart = new Date(year, i, 1);
+          const monthKey = format(monthStart, 'yyyy-MM');
+          const label = format(monthStart, 'MMMM yyyy');
+          const monthEvents = events
+            .filter(e => e.kind === legendFilter && e.date.startsWith(monthKey))
+            .sort((a, b) => a.date.localeCompare(b.date));
+          return { label, monthEvents };
+        });
+
+        return (
+          <div className="fixed inset-0 z-50 bg-background flex flex-col max-w-[480px] mx-auto">
+            <div className="flex items-center justify-between px-4 py-3 border-b bg-card sticky top-0 z-10">
+              <h2 className="text-base font-semibold">{kindFullLabel[legendFilter]}</h2>
+              <button
+                onClick={() => setLegendFilter(null)}
+                className="flex items-center gap-1 text-sm text-muted-foreground"
+              >
+                <X size={16} /> Close
+              </button>
+            </div>
+            <div className={`h-1 w-full ${getDotColor(legendFilter)}`} />
+            <div className="overflow-y-auto flex-1 pb-8">
+              {legendDetailMonths.map(({ label, monthEvents }) => (
+                <div key={label}>
+                  <div className="px-4 py-2 bg-secondary/40 border-b">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">{label}</span>
+                    {monthEvents.length > 0 && (
+                      <span className="ml-2 text-xs text-muted-foreground">({monthEvents.length})</span>
+                    )}
+                  </div>
+                  {monthEvents.length === 0 ? (
+                    <div className="px-4 py-3 text-sm text-muted-foreground border-b">None</div>
+                  ) : (
+                    monthEvents.map((e, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => {
+                          setLegendFilter(null);
+                          onSelectClient(e.householdId);
+                        }}
+                        className="flex items-center justify-between px-4 py-3 border-b cursor-pointer active:bg-accent transition-colors"
+                      >
+                        <span className="text-sm font-medium">{e.identifier}</span>
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getChipStyle(e.kind)}`}>
+                          {format(parseISO(e.date), 'MMM d, yyyy')}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         );
