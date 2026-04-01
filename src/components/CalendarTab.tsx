@@ -363,10 +363,14 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
               { kind: 'nudge' as const, label: 'Follow-up' },
               { kind: 'completed' as const, label: 'Completed' },
             ].map(({ kind, label }) => (
-              <div key={kind} className="flex items-center gap-1.5">
+              <button
+                key={kind}
+                onClick={() => setLegendFilter(kind)}
+                className="flex items-center gap-1.5 active:opacity-70 transition-opacity"
+              >
                 <div className={`w-2.5 h-2.5 rounded-full ${getDotColor(kind)}`} />
-                <span className="text-[10px] text-muted-foreground">{label}</span>
-              </div>
+                <span className="text-[10px] text-muted-foreground underline decoration-dotted">{label}</span>
+              </button>
             ))}
           </div>
         </div>
