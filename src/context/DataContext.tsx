@@ -164,6 +164,7 @@ const DEMO_INTERACTIONS: Interaction[] = [
     plan_updated: false,
     follow_up: null,
     note: 'Initial financial plan',
+    is_seed: true,
   },
   {
     id: 'demo-kevin-seed',
@@ -177,6 +178,7 @@ const DEMO_INTERACTIONS: Interaction[] = [
     plan_updated: false,
     follow_up: null,
     note: 'Initial financial plan',
+    is_seed: true,
   },
   {
     id: 'demo-charles-seed',
@@ -190,6 +192,7 @@ const DEMO_INTERACTIONS: Interaction[] = [
     plan_updated: false,
     follow_up: null,
     note: 'Initial financial plan',
+    is_seed: true,
   },
   {
     id: 'demo-debbie-seed',
@@ -203,6 +206,7 @@ const DEMO_INTERACTIONS: Interaction[] = [
     plan_updated: false,
     follow_up: null,
     note: 'Initial financial plan',
+    is_seed: true,
   },
   {
     id: 'demo-martha-seed',
@@ -216,6 +220,7 @@ const DEMO_INTERACTIONS: Interaction[] = [
     plan_updated: false,
     follow_up: null,
     note: 'Annual review',
+    is_seed: true,
   },
   {
     id: 'demo-martha-touch-1',
@@ -294,6 +299,7 @@ const DEMO_INTERACTIONS: Interaction[] = [
     plan_updated: false,
     follow_up: null,
     note: 'Initial financial plan',
+    is_seed: true,
   },
 ];
 export function DataProvider({ children }: { children: ReactNode }) {
@@ -360,6 +366,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       plan_updated: false, // CRITICAL: must be false
       follow_up: null,
       note: data.planNote || 'Initial financial plan',
+      is_seed: true,
     };
 
     setHouseholds(prev => [...prev, newHousehold]);
