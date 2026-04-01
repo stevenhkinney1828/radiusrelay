@@ -83,11 +83,12 @@ function Section({ title, clients, onSelect, onMove }: {
   onSelect: (id: string) => void;
   onMove?: (id: string) => void;
 }) {
-  if (clients.length === 0) return null;
-
   return (
     <div>
-      <div className="section-header">{title}</div>
+      <div className="section-header text-blue-600">{title}</div>
+      {clients.length === 0 && (
+        <div className="px-4 py-3 text-sm text-muted-foreground border-b">None</div>
+      )}
       {clients.map(h => {
         const displayStatus = getDisplayARStatus(h);
         const pillLabel = (displayStatus === 'Ready to Schedule' ? 'Ready' : displayStatus) + getARDateStr(h);
