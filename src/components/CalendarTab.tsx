@@ -24,6 +24,16 @@ function getChipStyle(kind: CalendarEvent['kind']): string {
   }
 }
 
+function getDotColor(kind: CalendarEvent['kind']): string {
+  switch (kind) {
+    case 'touch': return 'bg-indigo-500';
+    case 'ar-target': return 'bg-red-500';
+    case 'scheduled': return 'bg-purple-500';
+    case 'nudge': return 'bg-amber-500';
+    case 'completed': return 'bg-green-500';
+  }
+}
+
 function getKindLabel(kind: CalendarEvent['kind']): string {
   switch (kind) {
     case 'touch': return '· Touch';
