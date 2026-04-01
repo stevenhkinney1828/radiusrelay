@@ -156,12 +156,15 @@ export default function ClientDetail({ householdId, onBack, onEdit, onARWorkflow
 
         <button onClick={onTouchWorkflow} className="p-4 rounded-lg border bg-card text-left">
           <div className="text-xs text-muted-foreground mb-1">Quarterly Touch</div>
-          <div className={`text-sm font-medium ${
-            household.next_quarterly_touch && household.next_quarterly_touch < today
-              ? 'text-status-overdue' : ''
-          }`}>
-            {formatDate(household.next_quarterly_touch, 'MMM d, yyyy')}
-          </div>
+          {household.next_quarterly_touch && household.next_quarterly_touch < today ? (
+            <span className="status-badge status-badge-overdue">
+              Overdue · {formatDate(household.next_quarterly_touch, 'MMM d, yyyy')}
+            </span>
+          ) : (
+            <span className="status-badge" style={{ background: 'hsl(var(--secondary))', color: 'hsl(var(--foreground))' }}>
+              {formatDate(household.next_quarterly_touch, 'MMM d, yyyy')}
+            </span>
+          )}
           <div className="text-xs text-muted-foreground mt-2">
             Last: {formatDate(household.last_counted_touch, 'MMM d')}
           </div>
