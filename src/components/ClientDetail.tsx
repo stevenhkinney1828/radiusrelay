@@ -74,7 +74,12 @@ function buildDisplayList(sortedInteractions: Interaction[]): DisplayItem[] {
 }
 
 export default function ClientDetail({ householdId, onBack, onEdit, onARWorkflow, onTouchWorkflow }: ClientDetailProps) {
-  const { households, interactions } = useData();
+  const { households, interactions, updateInteraction } = useData();
+
+  // Edit panel state for completed AR cycle
+  const [editingAR, setEditingAR] = useState<Interaction | null>(null);
+  const [editDate, setEditDate] = useState('');
+  const [editPlanUpdated, setEditPlanUpdated] = useState(false);
   const household = households.find(h => h.id === householdId);
 
   const clientInteractions = useMemo(() =>
