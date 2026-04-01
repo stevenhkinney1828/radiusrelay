@@ -206,6 +206,7 @@ const DEMO_INTERACTIONS: Interaction[] = [
     plan_updated: false,
     follow_up: null,
     note: 'Initial financial plan',
+    is_seed: true,
   },
   {
     id: 'demo-martha-seed',
