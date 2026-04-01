@@ -66,7 +66,7 @@ export default function ClientsTab({ onSelectClient }: ClientsTabProps) {
       <div className="flex items-center gap-2 px-4 py-2 border-b overflow-x-auto">
         <select
           value={sort}
-          onChange={e => setSort(e.target.value as SortOption)}
+          onChange={e => { setSort(e.target.value as SortOption); setSortDir('asc'); }}
           className="text-xs bg-secondary rounded-md px-2 py-1 border-none outline-none"
         >
           <option value="az">A–Z</option>
