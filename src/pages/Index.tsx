@@ -8,6 +8,7 @@ import ClientDetail from '@/components/ClientDetail';
 import ARWorkflow from '@/components/ARWorkflow';
 import TouchWorkflow from '@/components/TouchWorkflow';
 import AdHocWorkflow from '@/components/AdHocWorkflow';
+import CalendarTab from '@/components/CalendarTab';
 import AddClientModal from '@/components/AddClientModal';
 import QuickLogModal from '@/components/QuickLogModal';
 import UndoToast from '@/components/UndoToast';
