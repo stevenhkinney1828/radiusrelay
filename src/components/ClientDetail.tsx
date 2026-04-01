@@ -246,14 +246,121 @@ export default function ClientDetail({ householdId, onBack, onEdit, onARWorkflow
   );
 }
 
+// --- AR Edit Panel (bottom sheet overlay) ---
+function AREditPanel({
+  interaction,
+  editDate,
+  setEditDate,
+  editPlanUpdated,
+  setEditPlanUpdated,
+  allInteractions,
+  onSave,
+  onCancel,
+}: {
+  interaction: Interaction;
+  editDate: string;
+  setEditDate: (d: string) => void;
+  editPlanUpdated: boolean;
+  setEditPlanUpdated: (v: boolean) => void;
+  allInteractions: Interaction[];
+  onSave: () => void;
+  onCancel: () => void;
+}) {
+  const otherDates = allInteractions
+    .filter(i => i.id !== interaction.id)
+    .map(i => i.date)
+    .sort();
+
+  const hasWarning = editDate !== interaction.date && otherDates.some(d =>
+    (interaction.date >= d && editDate < d) || (interaction.date <= d && editDate > d)
+  );
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 z-40 bg-black/40"
+        onClick={onCancel}
+      />
+      {/* Panel */}
+      <div className="fixed inset-x-0 bottom-0 z-50 bg-card border-t rounded-t-2xl shadow-lg p-5 animate-in slide-in-from-bottom duration-300">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold">Edit Annual Review Completion</h3>
+          <button onClick={onCancel} className="text-muted-foreground">
+            <X size={16} />
+          </button>
+        </div>
+
+        <label className="block text-xs font-medium text-muted-foreground mb-1">
+          Review completed on
+        </label>
+        <input
+          type="date"
+          value={editDate}
+          onChange={e => setEditDate(e.target.value)}
+          className="w-full border rounded-md px-3 py-2 text-sm bg-background mb-3"
+        />
+
+        <label className="flex items-center gap-2 text-sm mb-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={editPlanUpdated}
+            onChange={e => setEditPlanUpdated(e.target.checked)}
+            className="rounded border-primary"
+          />
+          Financial plan was updated
+        </label>
+
+        {hasWarning && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded p-2 mt-2 mb-3">
+            ⚠️ This date falls before or after other logged interactions. Review the timeline after saving to confirm everything looks right.
+          </div>
+        )}
+
+        <button
+          onClick={onSave}
+          className="w-full py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium mb-2"
+        >
+          Save changes
+        </button>
+        <button
+          onClick={onCancel}
+          className="w-full py-2 text-sm text-muted-foreground"
+        >
+          Cancel
+        </button>
+      </div>
+    </>
+  );
+}
+
 // --- AR Group Card (compact milestone summary) ---
-function ARGroupCard({ completed, entries }: { completed: boolean; entries: Interaction[] }) {
+function ARGroupCard({
+  completed,
+  entries,
+  onEditCompleted,
+}: {
+  completed: boolean;
+  entries: Interaction[];
+  onEditCompleted?: (entry: Interaction) => void;
+}) {
   // For completed cycles, show only the completion entry; for open cycles show all steps
   const toShow = completed ? entries.filter(e => e.marks_ar) : entries;
   const chronological = [...toShow].reverse();
 
+  const completionEntry = completed ? entries.find(e => e.marks_ar) : undefined;
+
   return (
-    <div className="mx-4 my-2 rounded-lg border bg-card overflow-hidden">
+    <div
+      className={`mx-4 my-2 rounded-lg border bg-card overflow-hidden ${
+        completed && onEditCompleted ? 'cursor-pointer active:bg-accent transition-colors' : ''
+      }`}
+      onClick={() => {
+        if (completed && onEditCompleted && completionEntry) {
+          onEditCompleted(completionEntry);
+        }
+      }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2.5">
         <div className="flex items-center gap-2">
@@ -298,6 +405,13 @@ function ARGroupCard({ completed, entries }: { completed: boolean; entries: Inte
           </div>
         ))}
       </div>
+
+      {/* Edit hint for completed cards */}
+      {completed && onEditCompleted && (
+        <div className="px-3 pb-2 text-right">
+          <span className="text-xs text-muted-foreground/50">✎ Edit date</span>
+        </div>
+      )}
     </div>
   );
 }
