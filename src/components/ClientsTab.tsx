@@ -10,7 +10,7 @@ interface ClientsTabProps {
 
 export default function ClientsTab({ onSelectClient }: ClientsTabProps) {
   const { households } = useData();
-  const [sort, setSort] = useState<SortOption>('az');
+  const [sort, setSort] = useState<SortOption>('next-ar');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [filter, setFilter] = useState<FilterOption>('all');
 
