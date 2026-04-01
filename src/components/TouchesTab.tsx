@@ -63,9 +63,15 @@ function TouchSection({ title, clients, dateField, onSelect, isOverdue }: {
       {clients.map(h => (
         <div key={h.id} className="client-row" onClick={() => onSelect(h.id)}>
           <span className="font-medium text-sm">{h.identifier}</span>
-          <span className={`text-xs ${isOverdue ? 'status-badge status-badge-overdue' : 'text-muted-foreground'}`}>
-            {formatDate(h[dateField], 'MMM d')}
-          </span>
+          {isOverdue ? (
+            <span className="status-badge status-badge-overdue">
+              Overdue · {formatDate(h[dateField], 'MMM d, yyyy')}
+            </span>
+          ) : (
+            <span className="status-badge" style={{ background: 'hsl(var(--secondary))', color: 'hsl(var(--foreground))' }}>
+              {formatDate(h[dateField], 'MMM d, yyyy')}
+            </span>
+          )}
         </div>
       ))}
     </div>
