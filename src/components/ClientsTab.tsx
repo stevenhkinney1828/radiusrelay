@@ -11,12 +11,12 @@ interface ClientsTabProps {
 export default function ClientsTab({ onSelectClient }: ClientsTabProps) {
   const { households } = useData();
   const [sort, setSort] = useState<SortOption>('az');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [filter, setFilter] = useState<FilterOption>('all');
 
   const activeHouseholds = useMemo(() => {
     let list = households.filter(h => h.is_active);
 
-    // Filter
     if (filter === 'overdue') {
       const today = new Date().toISOString().slice(0, 10);
       list = list.filter(h => {
@@ -26,15 +26,20 @@ export default function ClientsTab({ onSelectClient }: ClientsTabProps) {
       });
     }
 
-    // Sort
     list.sort((a, b) => {
       switch (sort) {
         case 'az':
-          return a.identifier.localeCompare(b.identifier);
+          return sortDir === 'asc'
+            ? a.identifier.localeCompare(b.identifier)
+            : b.identifier.localeCompare(a.identifier);
         case 'next-ar':
-          return (a.next_review_target || '9999').localeCompare(b.next_review_target || '9999');
+          return sortDir === 'asc'
+            ? (a.next_review_target || '9999').localeCompare(b.next_review_target || '9999')
+            : (b.next_review_target || '9999').localeCompare(a.next_review_target || '9999');
         case 'next-touch':
-          return (a.next_quarterly_touch || '9999').localeCompare(b.next_quarterly_touch || '9999');
+          return sortDir === 'asc'
+            ? (a.next_quarterly_touch || '9999').localeCompare(b.next_quarterly_touch || '9999')
+            : (b.next_quarterly_touch || '9999').localeCompare(a.next_quarterly_touch || '9999');
         case 'ar-status': {
           const order: Record<string, number> = {
             'Ready to Schedule': 0,
@@ -44,7 +49,8 @@ export default function ClientsTab({ onSelectClient }: ClientsTabProps) {
             'Skipped': 4,
             'Completed': 5,
           };
-          return (order[getDisplayARStatus(a)] ?? 5) - (order[getDisplayARStatus(b)] ?? 5);
+          const diff = (order[getDisplayARStatus(a)] ?? 5) - (order[getDisplayARStatus(b)] ?? 5);
+          return sortDir === 'asc' ? diff : -diff;
         }
         default:
           return 0;
@@ -52,7 +58,7 @@ export default function ClientsTab({ onSelectClient }: ClientsTabProps) {
     });
 
     return list;
-  }, [households, sort, filter]);
+  }, [households, sort, sortDir, filter]);
 
   return (
     <div>
