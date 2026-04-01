@@ -477,7 +477,7 @@ export default function CalendarTab({ onSelectClient }: CalendarTabProps) {
                           setLegendFilter(null);
                           onSelectClient(e.householdId);
                         }}
-                        className="flex items-center justify-between px-4 py-3 border-b cursor-pointer active:bg-accent transition-colors"
+                        className="flex items-center justify-between pl-8 pr-4 py-3 border-b border-l-2 border-l-secondary ml-4 cursor-pointer active:bg-accent transition-colors"
                       >
                         <span className="text-sm font-medium">{e.identifier}</span>
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getChipStyle(e.kind)}`}>
